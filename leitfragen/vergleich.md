@@ -109,6 +109,9 @@ für größere Zahlungsvolumina sind individuelle Konditionen möglich
 ## Akzeptanz
 
 ## Potentielle Nutzer
+Anbieter von Onlineshops 
+Privatpersonen mit Kredit-/Debitkarten bzw. digitalen Wallets
+Touristen (internationale Karten werden unterstützt)
 
 ## Verbreitung
 
