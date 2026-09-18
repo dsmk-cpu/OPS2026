@@ -70,23 +70,51 @@ Durch was zeichnen Sich die drei angegebenen Zahlungssysteme aus und worin unter
 # Cash2Code
 
 ## Gebühren
-
+- Für den Endverbraucher grundsätzlich kostenlos
+- Keine Kontoführungsgebühren, da kein Guthabenkonto registriert ist
+- Gebühren für den Händler sind individuell angepasst, meist pro Transaktion (Merchant Fee)
+- Genaue Höhe hängt von dem individuellen Vertrag mit Cash2Code ab
 ## Mechanik
-
+- Möglichkeit bei Online-Zahlungen mit Bargeld zu bezahlen
+- Es wird ein Barcode / Zahlcode erstellt
+- Endverbraucher geht mit diesem Code zu einer Verkaufsstelle (Kiosk, Tankstelle etc.)
+- Dort wird der Code gescannt und vom Endverbraucher bar bezahlt
+- Cash2Code übermittelt den Eingang der Zahlung an den Händler
 ## Seriösität
-
+- Unternehmen Funanga grundsätzlich etablierter Zahlungsdienstleister
+- Lediglich die Branchen mit denen Cash2Code meist verpartnert ist wirken unseriös
 ## Integration
-
+- Direkte API-Integration
+- Händler erhalten Test-Zugangsdaten (Merchant-Username und Passwort), um die Erstellung von Barcodes und die Validierung der Zahlung zu programmieren
+- Es gibt auch vorgefertigte Optionen über einen Zahlungsdienstleister, wo Cash2Code bereits integriert ist (z.B. IXOPAY, Rebilly)
+- Händler muss hier die Methode nur im Backend aktivieren und seine Händlerdaten eingeben
 ## UI/UX
-
+- Die Anfrage des Zahlungscodes unkompliziert
+- Jedoch muss der Kunde physisch zu einer Verkaufsstelle gehen, um die Zahlung zu tätigen
+- Evtl. Unzufriedenheit aufgrund dessen, dass Zahlungen nicht 24/7 getätigt werden könnten
 ## Akzeptanz
-
+- Cash2Code wird vor allem dort akzeptiert, wo Prepaid- oder Bargeldlösungen oft genutzt werden
+- Oftmals fallen darunter Erotik- oder Online-Glücksspielseiten
 ## Potentielle Nutzer
-
+- Nutzer die Bargeld bevorzugen oder keine Kartendaten eingeben möchten
+- Nutzer von jeglichen Branchen, in denen Bargeld weit verbreitet ist
+- Nutzer in Gebieten, wo digitale Wallets evtl. weniger verbreitet sind
 ## Verbreitung
-
+- Internationale Verbreitung, vor allem dort wo Verkaufsstellen existieren
+- über 550.000 Partnerfilialen in Europa
+- Gängiges Angebot bei Tankstellen und Kiosks
+- Fokus liegt oft auf Nischen (Online-Casino, Sportwetten, Krypto, VPN etc.)
+- Dort wo keine physischen Verkaufsstellen vertreten, ist vor allem der eVoucher verbreitet
 ## Herkunft
-
+- Unternehmen Funanga gründet Cash2Code 2013 (Firmensitz Berlin)
+- Rechtlich gesehen, wird die Marke allerdings von Eightball Marketing Services betrieben mit Sitz in Malta
+- Entwickelte Cash2Code mit dem Ziel Bargeld und Online-Zahlungen zu verbinden
+## Kritik / Risiken
+- Kein Käuferschutz
+- Oft Ziel von Betrugsmaschen (Kunde / Angestellter wird z.B. am Telefon dazu gebracht, Mitarbeiter scannt und schaltet Code frei ohne Bezahlung -> z.B. "Geld im Auto liegen lassen")
+- Eingeschränkte Zahlungsmöglichkeiten für den alltäglichen Einkauf (Kleidung, Lebensmittel etc.)
+- ständige Beobachtung bezüglich potenzieller Geldwäsche aufgrund der Anonymität
+- Feste Beträge (10, 25, 50, 100, 200 und 400) pro Transaktion, jedoch kein generelles Limit an Codes
 ---------------------------------------
 
 # Stripe
