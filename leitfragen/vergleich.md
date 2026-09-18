@@ -92,12 +92,12 @@ Durch was zeichnen Sich die drei angegebenen Zahlungssysteme aus und worin unter
 # Stripe
 
 ## Gebühren
-1,5 % + 0,25€ für Standardkarten aus dem EWR
-2,5 % + 0,25€ für Karten aus dem Vereinigten Königreich
-keine Einrichtungsgebühr
-keine monatliche Grundgebühr
-laut Stripe keine versteckten Gebühren
-für größere Zahlungsvolumina sind individuelle Konditionen möglich
+- 1,5 % + 0,25€ für Standardkarten aus dem EWR
+- 2,5 % + 0,25€ für Karten aus dem Vereinigten Königreich
+- Keine Einrichtungsgebühr
+- Keine monatliche Grundgebühr
+- Laut Stripe keine versteckten Gebühren
+- Für größere Zahlungsvolumina sind individuelle Konditionen möglich
 ## Mechanik
 
 ## Seriösität
@@ -109,13 +109,13 @@ für größere Zahlungsvolumina sind individuelle Konditionen möglich
 ## Akzeptanz
 
 ## Potentielle Nutzer
-Anbieter von Onlineshops 
-Privatpersonen mit Kredit-/Debitkarten bzw. digitalen Wallets
-Touristen (internationale Karten werden unterstützt)
+- Anbieter von Onlineshops 
+- Privatpersonen mit Kredit-/Debitkarten bzw. digitalen Wallets
+- Touristen (internationale Karten werden unterstützt)
 
 ## Verbreitung
 
 ## Herkunft
-2010 von den irischen Brüdern Patrick und John Collison gegründet.
-Offizieller launch war September 2011.
-Zwei Hauptsitze -> San Francisco und Dublin
+- 2010 von den irischen Brüdern Patrick und John Collison gegründet.
+- Offizieller launch war September 2011.
+- Zwei Hauptsitze -> San Francisco und Dublin
