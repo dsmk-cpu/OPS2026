@@ -127,23 +127,50 @@ Durch was zeichnen Sich die drei angegebenen Zahlungssysteme aus und worin unter
 - Laut Stripe keine versteckten Gebühren
 - Für größere Zahlungsvolumina sind individuelle Konditionen möglich
 ## Mechanik
+- Kunde gibt seine Daten in ein integriertes Formular von Stripe ein
+- sensible Daten werden dabei nicht auf dem Server des Händlers gespeichert -> Entlastung z.B. von PCI-DSS
+- diese Daten werden auf den Servern von Stripe verschlüsselt
+- Diese Daten leitet Stripe weiter an das jeweilige Kartennetzwerk (Visa, Mastercard) und an die Bank des Kunden
+- Wenn die Bank diese Zahlung freigibt, wird das Geld für den Händler reserviert
+- Nach dem Warenversand kriegt der Händler diese Zahlung zunächst auf das hinterlegte Stripe-Konto gutgeschrieben
+- Beim Überweisen an das Bankkonto gibt es eine extra Gebühr
 
+(Vergleich zu Paypal, Google: Unsichtbare Integration: Anders als bei PayPal werden Kunden beim Bezahlen per Kreditkarte oft gar nicht auf eine externe Plattform weitergeleitet; Stripe agiert komplett "White-Label" im Hintergrund.)
 ## Seriösität
-
+- seriös, da einer der weltweiten Markführer für Zahlungsdienste
+- Zahlungsabwicklung für Amazon, Google, Shopify, OpenAI usw.
+- Strenge Regulierungen
+- Moderne Sicherheitssysteme (Verschlüsselung, Stripe Radar (KI-Betrugsschutz), 3D Secure)
 ## Integration
-
+- Es gibt eine Variante mit No-Code/Low-Code
+- Lediglich das Einbinden von einem Link, Rest erledigt Stripe selbst
+- Es gibt auch eine Möglichkeit von vorgefertigten Plugins (für u.a. Shopify)
+- Es gibt auch eine Variante mit Stripe Elements -> UI-Komponenten zum Einbinden auf der Händlerseite
+- Und es gibt eine eigene API von Stripe -> Webhooks -> für alle gängigen Programmiersprachen
 ## UI/UX
-
+- gilt in der Branche als Standard (UI von Stripe)
+- Stripe Dashboard für Händler als Übersicht über die Finanzen
+- Formulare, One-Click-Zahlungen und mehrere Zahlungsmethoden für den Kunden
 ## Akzeptanz
-
+- Akzeptanz, vor allem im Online Handel sehr hoch, da es einer der größten Zahlungsdienstleister weltweit ist
+- Stripe unterstützt weltweit über 125 Zahlungsmethoden
 ## Potentielle Nutzer
 - Anbieter von Onlineshops 
 - Privatpersonen mit Kredit-/Debitkarten bzw. digitalen Wallets
 - Touristen (internationale Karten werden unterstützt)
-
+- Aber auch größere Unternehmen bis hin zu Großkonzernen die weltweit bekannt sind
+- Auch die Börse
 ## Verbreitung
-
+- Wie schon erwähnt, einer der größten Zahlungsdienstleister weltweit
+- Transaktionsvolumen von 1,9 Billionen $ (2025)
+- 1,6% des weltweiten BIP
+- Viele globalen Großkonzerne nutzen Stripe
 ## Herkunft
 - 2010 von den irischen Brüdern Patrick und John Collison gegründet.
 - Offizieller launch war September 2011.
 - Zwei Hauptsitze -> San Francisco und Dublin
+## Kritik / Risiken
+- Einfrieren von Konten mittels KI, sobald ungewöhnliche Aktivitäten erkannt werden (plötzlich großer Umsatz z.B.)
+- Dabei wird das Guthaben oft 90-180 Tage einbehalten
+- Schwere Erreichbarkeit von Support (Kundenerfahrungen)
+- Hohe Kosten wenn man die internationale Masse ansprechen möchte als Händler
