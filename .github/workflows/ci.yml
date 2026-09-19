@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+defaults:
+  run:
+    working-directory: parkpay
+
 jobs:
   quality:
     runs-on: ubuntu-latest
@@ -19,6 +23,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
+          cache-dependency-path: parkpay/package-lock.json
 
       - name: Install dependencies
         run: npm ci
