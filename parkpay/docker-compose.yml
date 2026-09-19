@@ -1,0 +1,42 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+
+    container_name: parkpay-backend
+
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_PATH: /app/data/parkpay.sqlit
+
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - ./apps/backend/src:/app/apps/backend/src
+      - parkpay-data:/app/apps/backend/data
+
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+
+    container_name: parkpay-frontend
+
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./apps/frontend/src:/app/apps/frontend/src
+
+    depends_on:
+      - backend
+
+    restart: unless-stopped
+
+volumes:
+  parkpay-data:
