@@ -7,7 +7,7 @@ Optional, for local development without Docker:
 - npm
 
 # Start project with Docker
-Start the project with the following command in the root directory:
+Start the project with the following command in the parkpay root directory:
 ```
 docker compose up --build
 ```
