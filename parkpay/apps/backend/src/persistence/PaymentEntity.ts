@@ -12,7 +12,7 @@ export class PaymentEntity {
     parkingId!: number;
 
     @Column( {type: 'text', unique: true } )
-    idempotencyId!: string;
+    idempotencyKey!: string;
 
     @Column( {type: "varchar", length: 10} )
     licensePlate!: string;
