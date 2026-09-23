@@ -174,3 +174,5 @@ Durch was zeichnen Sich die drei angegebenen Zahlungssysteme aus und worin unter
 - Dabei wird das Guthaben oft 90-180 Tage einbehalten
 - Schwere Erreichbarkeit von Support (Kundenerfahrungen)
 - Hohe Kosten wenn man die internationale Masse ansprechen möchte als Händler
+
+Damit die Zahlungsdienstleister auf möglichst viele Punkte untersucht und dann verglichen werden wurde die Untersuchung in verschiedene Aspekte für den jeweiligen Zahlungsdienstleister unterteilt. Darunter fallen jegliche Art von Gebühren, die Mechanik hinter dem Zahlungsdienstleister, die Seriösität, der Ablauf der Integration in der Anwendung oder dem Shop, die UI / UX sowohl für den Kunden als auch für den Händler, die Akzeptanz im Handel, die potentiellen Nutzer des Zahlungsdienstleisters, die Verbreitung unter den Nutzern, die Herkunft des Zahlungsdienstleisters und zum Abschluss die Kritik bzw. die Risiken die mit dem Zahlungsdienstleister in Verbindung stehen. Dabei wurde auch über die Parkraumbetreibung hinaus untersucht, sodass ein möglichst rundes Bild des jeweiligen Zahlungsdienstleisters entsteht.
