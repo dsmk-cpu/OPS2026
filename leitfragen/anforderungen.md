@@ -17,3 +17,4 @@
 - Verschiedene Währungen möglich
 - Dienstleister kann verschiedene Zahlungsmethoden anbieten (Lastschrift, Pay-Later, ...)
   
+Die fachlichen Anforderungen an einen Zahlungsdienstleister aus Sicht eines Parkraumbetreibers ergeben sich aus mehreren unterschiedlichen Punkten. Dadurch, dass in diesem Fall keine dauerhafte Internetverbindung bestehen kann, sollte auch der Zahlungsdienst ohne Internetverbindung funktionieren, unter anderem via Polling. Dadurch ergibt sich auch die Anforderung, dass ein Zahlungsdienst hochverfügbar sein muss, damit die parkenden Kunden zu jedem beliebigen Zeitpunkt zahlen können. Es sollte auch möglich sein beliebige Zahlungsbeträge, die man den Kunden in Rechnung stellt, möglich bzw. zur Auswahl verfügbar sein. 
