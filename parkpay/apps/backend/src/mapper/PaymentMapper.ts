@@ -6,7 +6,7 @@ export class PaymentMapper {
         return new Payment(
             entity.id,
             entity.parkingId,
-            entity.idempotencyId,
+            entity.idempotencyKey,
             entity.licensePlate,
             entity.amountInCents,
             entity.currency,
@@ -24,7 +24,7 @@ export class PaymentMapper {
         const entity = new PaymentEntity()
         entity.id = domain.id
         entity.parkingId = domain.parkingId
-        entity.idempotencyId = domain.idempotencyKey
+        entity.idempotencyKey = domain.idempotencyKey
         entity.licensePlate = domain.licensePlate
         entity.amountInCents = domain.amountInCents
         entity.currency = domain.currency
