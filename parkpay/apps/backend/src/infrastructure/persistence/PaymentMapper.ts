@@ -1,5 +1,5 @@
-import {PaymentEntity} from "../persistence/PaymentEntity.js";
-import {Payment} from "../domain/Payment.js";
+import {PaymentEntity} from "./PaymentEntity.js";
+import {Payment} from "../../domain/Payment.js";
 
 export class PaymentMapper {
     static toDomain(entity: PaymentEntity): Payment{

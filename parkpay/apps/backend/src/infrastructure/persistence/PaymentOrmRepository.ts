@@ -1,9 +1,9 @@
-import {PaymentRepository} from "../ports/PaymentRepository.js";
+import {PaymentRepository} from "../../ports/PaymentRepository.js";
 import {Repository} from "typeorm";
-import {Payment} from "../domain/Payment.js";
+import {Payment} from "../../domain/Payment.js";
 import {PaymentEntity} from "./PaymentEntity.js";
-import {PaymentMapper} from "../mapper/PaymentMapper.js";
-import {PaymentStatus} from "../domain/PaymentStatus.js";
+import {PaymentMapper} from "./PaymentMapper.js";
+import {PaymentStatus} from "../../domain/PaymentStatus.js";
 
 export class PaymentOrmRepository implements PaymentRepository{
     constructor(private readonly repository: Repository<PaymentEntity>){}

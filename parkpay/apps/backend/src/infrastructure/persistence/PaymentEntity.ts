@@ -1,6 +1,6 @@
 import {Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn} from "typeorm";
-import {PaymentStatus} from "../domain/PaymentStatus.js";
-import {Currency} from "../domain/Currency.js";
+import {PaymentStatus} from "../../domain/PaymentStatus.js";
+import {Currency} from "../../domain/Currency.js";
 
 @Entity('payments')
 export class PaymentEntity {
@@ -26,21 +26,21 @@ export class PaymentEntity {
     @Column( {type: 'simple-enum', enum: PaymentStatus } )
     status!: PaymentStatus;
 
-    @Column( {type: 'string', nullable: true} )
+    @Column( {type: 'text', nullable: true} )
     paymentProviderReference!: string | null;
 
     @Column( {type: 'integer', default: 0} )
     retryCount!: number;
 
-    @Column( {type: 'date', nullable: true} )
+    @Column( {type: 'datetime', nullable: true} )
     nextRetryAt!: Date | null;
 
-    @Column( {type: 'date', nullable: true} )
+    @Column( {type: 'datetime', nullable: true} )
     lastAttemptAt!: Date | null;
 
-    @CreateDateColumn()
+    @CreateDateColumn( {type: 'datetime'} )
     createdAt!: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn( {type: 'datetime'} )
     updatedAt!: Date;
 }
