@@ -9,8 +9,10 @@
     "build": "tsc",
     "start": "node dist/src/server.js",
     "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest"
-
+    "test:watch": "vitest",
+    "migration:generate": "npm run build && typeorm migration:generate src/infrastructure/persistence/migrations/InitialPayment -d dist/src/config/data-source.js",
+    "migration:run": "npm run build && typeorm migration:run -d dist/src/config/data-source.js",
+    "migration:revert": "npm run build && typeorm migration:revert -d dist/src/config/data-source.js"
   },
   "keywords": [],
   "author": "",
