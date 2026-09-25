@@ -5,12 +5,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch --env-file-if-exists=.env src/server.ts",
+    "dev:docker": "npm run migration:run && tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/src/server.js",
     "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest"
-
+    "test:watch": "vitest",
+    "migration:generate": "npm run build && typeorm migration:generate src/infrastructure/persistence/migrations/InitialPayment -d dist/src/config/data-source.js",
+    "migration:run": "npm run build && typeorm migration:run -d dist/src/config/data-source.js",
+    "migration:revert": "npm run build && typeorm migration:revert -d dist/src/config/data-source.js"
   },
   "keywords": [],
   "author": "",

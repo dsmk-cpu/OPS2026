@@ -1,0 +1,17 @@
+node_modules
+**/node_modules
+
+dist
+**/dist
+
+.git
+.github
+.idea
+
+.env
+**/.env
+
+**/data
+**/*.sqlite
+**/*.sqlite-wal
+**/*.sqlite-shm
