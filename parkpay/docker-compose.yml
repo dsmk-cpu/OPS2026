@@ -9,7 +9,7 @@ services:
     environment:
       NODE_ENV: development
       PORT: 3000
-      DATABASE_PATH: /app/data/parkpay.sqlit
+      DATABASE_PATH: /app/data/parkpay.sqlite
 
 
     ports:
