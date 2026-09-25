@@ -30,7 +30,7 @@ export class PaymentOrmRepository implements PaymentRepository{
 
     }
 
-    async findByParkingID(parkingId: number): Promise<Payment | null> {
+    async findByParkingId(parkingId: number): Promise<Payment | null> {
         const entity = await this.repository.findOne({
             where: {parkingId}
         });
