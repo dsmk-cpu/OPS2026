@@ -1,7 +1,22 @@
 import {describe, expect, it} from "vitest";
-import {InvalidPaymentError, Payment} from "../../src/domain/Payment.js";
+import {Payment} from "../../src/domain/Payment.js";
+import {InvalidPaymentError} from "../../src/errors/InvalidPaymentError.js";
 import {Currency} from "../../src/domain/Currency.js";
 import {PaymentStatus} from "../../src/domain/PaymentStatus.js";
+import {InvalidPaymentTransitionError} from "../../src/errors/InvalidPaymentTransitionError.js";
+
+function createPayment(): Payment {
+    return Payment.create({
+        id: '1',
+        parkingId: 11,
+        idempotencyKey: 'parking:11',
+        licensePlate: 'dil abc12',
+        amountInCents: 1250,
+        currency: Currency.EUR,
+        now: new Date('2026-09-25T16:00:00.000Z'),
+    })
+}
+
 
 describe('Payment.create', () => {
     it('create pending payment with safe defaults', () => {
@@ -84,5 +99,69 @@ describe('Payment.create', () => {
                 currency: Currency.EUR,
             }),
         ).toThrow(InvalidPaymentError);
+    });
+});
+
+
+describe('Payment.markPaid', () => {
+
+    it('marks pending as paid', () => {
+        const payment = createPayment();
+        const timestamp = new Date('2026-09-25T10:05:00.000Z');
+
+        payment.markPaid('mockProviderReference1', timestamp);
+
+        expect(payment.status).toBe(PaymentStatus.PAID);
+        expect(payment.paymentProviderReference).toBe('mockProviderReference1');
+        expect(payment.lastAttemptAt).toEqual(timestamp);
+        expect(payment.nextRetryAt).toBeNull();
+        expect(payment.updatedAt).toEqual(timestamp);
+    });
+
+    it('rejects empty payment provider reference', () => {
+        const payment = createPayment();
+
+        expect(() => {
+            payment.markPaid('   ');
+        }).toThrow(InvalidPaymentError);
+
+        expect(payment.status).toBe(PaymentStatus.PENDING);
+        expect(payment.paymentProviderReference).toBeNull();
+    });
+
+    it('rejects transition from paid to paid', () => {
+        const payment = createPayment();
+
+        payment.markPaid('mockProviderReference1');
+
+        expect(() => {
+            payment.markPaid('anotherMockProviderReference1');
+        }).toThrow(InvalidPaymentTransitionError);
+
+        expect(payment.status).toBe(PaymentStatus.PAID);
+        expect(payment.paymentProviderReference).toBe('mockProviderReference1');
+    });
+
+    it('describes the rejected status transition', () => {
+        const payment = createPayment();
+
+        payment.markPaid('mockProviderReference1');
+
+        let thrownError: unknown;
+
+        try {
+            payment.markPaid('anotherMockProviderReference1');
+        } catch (error) {
+            thrownError = error;
+        }
+
+        expect(thrownError).toBeInstanceOf(
+            InvalidPaymentTransitionError,
+        );
+
+        expect(thrownError).toMatchObject({
+            from: PaymentStatus.PAID,
+            to: PaymentStatus.PAID,
+        });
     });
 });
