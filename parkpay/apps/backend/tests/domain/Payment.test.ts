@@ -165,3 +165,109 @@ describe('Payment.markPaid', () => {
         });
     });
 });
+
+
+describe('Payment.markCaptured', () => {
+
+    it('mark paid to captured', () => {
+        const payment = createPayment();
+        const captureTimestamp = new Date('2026-09-25T10:10:00.000Z');
+
+        payment.markPaid('mockProviderReference1', new Date('2026-09-25T10:05:00.000Z'));
+
+        payment.markCaptured(captureTimestamp);
+
+        expect(payment.status).toBe(PaymentStatus.CAPTURED);
+        expect(payment.paymentProviderReference).toBe('mockProviderReference1');
+        expect(payment.lastAttemptAt).toEqual(captureTimestamp);
+        expect(payment.updatedAt).toEqual(captureTimestamp);
+    });
+
+    it('rejects capturing a pending payment', () => {
+        const payment = createPayment();
+
+        expect(() => {
+            payment.markCaptured();
+        }).toThrow(InvalidPaymentTransitionError);
+
+        expect(payment.status).toBe(PaymentStatus.PENDING);
+    });
+});
+
+
+describe('Payment.markCancelled', () => {
+
+    it('mark pending to cancelled', () => {
+        const payment = createPayment();
+        const cancelledAt = new Date('2026-09-25T10:10:00.000Z');
+
+        payment.markCancelled(cancelledAt);
+
+        expect(payment.status).toBe(PaymentStatus.CANCELED);
+        expect(payment.nextRetryAt).toBeNull();
+        expect(payment.updatedAt).toEqual(cancelledAt);
+    });
+
+    it('rejects cancelling a paid payment', () => {
+        const payment = createPayment();
+        payment.markPaid('mockProviderReference1');
+
+        expect(() => {
+            payment.markCancelled();
+        }).toThrow(InvalidPaymentTransitionError);
+
+        expect(payment.status).toBe(PaymentStatus.PAID);
+    });
+});
+
+describe('Payment.registerFailedAttempts', () => {
+
+    it('registers a new retry after a failed attempt', () => {
+        const payment = createPayment();
+
+        const attemptedAt = new Date('2026-09-25T10:05:00.000Z');
+        const nextRetryAt = new Date('2026-09-25T10:10:00.000Z');
+
+        payment.registerFailedAttempts(nextRetryAt, attemptedAt);
+
+        expect(payment.status).toBe(PaymentStatus.PENDING);
+
+        expect(payment.retryCount).toBe(1);
+        expect(payment.lastAttemptAt).toEqual(attemptedAt);
+        expect(payment.nextRetryAt).toBe(nextRetryAt);
+        expect(payment.updatedAt).toEqual(attemptedAt);
+    });
+
+    it('updates retry count on every failed attempt', () => {
+        const payment = createPayment();
+
+
+        payment.registerFailedAttempts(new Date('2026-09-25T10:10:00.000Z'), new Date('2026-09-25T10:05:00.000Z'));
+        payment.registerFailedAttempts(new Date('2026-09-25T10:15:00.000Z'), new Date('2026-09-25T10:10:00.000Z'));
+
+        expect(payment.retryCount).toBe(2);
+    });
+
+    it('rejects retry time that is earlier then the last attempt', () => {
+        const payment = createPayment();
+
+        expect(() => {
+            payment.registerFailedAttempts(new Date('2026-09-25T10:05:00.000Z'), new Date('2026-09-25T10:10:00.000Z'));
+        }).toThrow(InvalidPaymentError);
+
+        expect(payment.retryCount).toBe(0);
+        expect(payment.nextRetryAt).toBe(null);
+    });
+
+    it('rejects retries for an already paid payment', () => {
+        const payment = createPayment();
+        payment.markPaid('mockProviderReference1');
+
+        expect(() => {
+            payment.registerFailedAttempts(new Date('2026-09-25T10:10:00.000Z'), new Date('2026-09-25T10:05:00.000Z'));
+        }).toThrow(InvalidPaymentError);
+
+        expect(payment.retryCount).toBe(0);
+        expect(payment.status).toBe(PaymentStatus.PAID);
+    });
+})
