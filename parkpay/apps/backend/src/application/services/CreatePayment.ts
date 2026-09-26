@@ -22,7 +22,7 @@ export class CreatePayment {
         const payment = Payment.create({
             id: paymentId,
             parkingId: command.parkingId,
-            idempotencyKey: `parking:${paymentId}`,
+            idempotencyKey: `parking:${command.parkingId}`,
             licensePlate: command.licensePlate,
             amountInCents: command.amountInCents,
             currency: Currency.EUR,

@@ -66,7 +66,7 @@ describe('CreatePaymentService', () => {
         expect(savedPayment?.licensePlate).toBe('GI XY 123');
         expect(savedPayment?.amountInCents).toBe(1250);
         expect(savedPayment?.status).toBe(PaymentStatus.PENDING);
-        expect(savedPayment?.idempotencyKey).toBe('parking:payment1');
+        expect(savedPayment?.idempotencyKey).toBe('parking:123');
     });
 
     it('returns an identical existing payment', async () => {
