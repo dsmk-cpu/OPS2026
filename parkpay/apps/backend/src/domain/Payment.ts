@@ -177,6 +177,53 @@ export class Payment {
         this.state.updatedAt = timestamp;
     }
 
+    markCaptured(occurredAt : Date = new Date()): void {
+        if (this.state.status !== PaymentStatus.PAID ) {
+            throw new InvalidPaymentTransitionError(this.state.status, PaymentStatus.PAID);
+        }
+
+        if (this.state.paymentProviderReference === null) {
+            throw new InvalidPaymentError('Payment provider reference for an already paid payment must not be empty.');
+        }
+
+        this.state.status = PaymentStatus.CAPTURED;
+        this.state.lastAttemptAt = occurredAt;
+        this.state.nextRetryAt = null;
+        this.state.updatedAt = occurredAt;
+    }
+
+
+    markCancelled(occurredAt: Date = new Date()): void {
+        if (this.state.status !== PaymentStatus.PENDING) {
+            throw new InvalidPaymentTransitionError(this.state.status, PaymentStatus.CANCELED);
+        }
+
+        this.state.status = PaymentStatus.CANCELED;
+        this.state.nextRetryAt = null;
+        this.state.updatedAt = occurredAt;
+    }
+
+    registerFailedAttempts(nextRetryAt:Date, attemptedAt: Date = new Date()): void {
+        if (this.state.status !== PaymentStatus.PENDING) {
+            throw new InvalidPaymentError('Only a pending payment can be retried.');
+        }
+
+        if (Number.isNaN(nextRetryAt.getTime()) || Number.isNaN(attemptedAt.getTime())) {
+            throw new InvalidPaymentError('Retry timestamps must be valid dates.');
+        }
+
+        if (nextRetryAt.getTime() <= attemptedAt.getTime()){
+            throw new InvalidPaymentError('Next retry timestamp must be after a failed attempt.');
+        }
+
+        this.state.retryCount += 1;
+        this.state.lastAttemptAt = attemptedAt;
+        this.state.nextRetryAt = nextRetryAt;
+        this.state.updatedAt = attemptedAt;
+    }
+
+
+
 
     private static validatePaymentValues(values: CreatePaymentValues | RestorePaymentValues): void {
         if (values.id.trim().length === 0) {
