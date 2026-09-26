@@ -1,5 +1,7 @@
 import {Currency} from "./Currency.js";
 import {PaymentStatus} from "./PaymentStatus.js";
+import {InvalidPaymentError} from "../errors/InvalidPaymentError.js";
+import {InvalidPaymentTransitionError} from "../errors/InvalidPaymentTransitionError.js";
 
 
 export interface CreatePaymentValues {
@@ -45,12 +47,7 @@ interface PaymentState {
 }
 
 
-export class InvalidPaymentError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "InvalidPaymentError";
-    }
-}
+
 
 export class Payment {
 
@@ -159,6 +156,25 @@ export class Payment {
             createdAt: values.createdAt,
             updatedAt: values.updatedAt,
         });
+    }
+
+
+    markPaid(paymentProviderReference: string, timestamp: Date = new Date()): void {
+        if (this.state.status !== PaymentStatus.PENDING) {
+            throw new InvalidPaymentTransitionError(this.state.status, PaymentStatus.PAID);
+        }
+
+        const cleanedReference = paymentProviderReference.trim()
+
+        if (cleanedReference.length === 0) {
+            throw new InvalidPaymentError('Payment provider reference must not be empty.');
+        }
+
+        this.state.status = PaymentStatus.PAID;
+        this.state.paymentProviderReference = cleanedReference;
+        this.state.lastAttemptAt = timestamp;
+        this.state.nextRetryAt = null;
+        this.state.updatedAt = timestamp;
     }
 
 
