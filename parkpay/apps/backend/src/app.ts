@@ -7,10 +7,23 @@ import {PaymentController} from "./presentation/controllers/PaymentController.js
 import {createPaymentRouter} from "./presentation/routes/PaymentRoutes.js";
 import {GetPayment} from "./application/services/GetPayment.js";
 import {errorHandler} from "./errors/ErrorHandler.js";
+import {pinoHttp} from "pino-http";
+import {logger} from "./infrastructure/logging/logger.js";
+import {randomUUID} from "node:crypto";
 
 export const app = express();
 
 app.disable('x-powered-by');
+
+app.use(pinoHttp({
+    logger,
+    genReqId: (req, res) => {
+        const requestId = randomUUID();
+        res.setHeader('X-Request-Id', requestId);
+        return requestId;
+        },
+    }),
+);
 
 app.use(
     express.json({

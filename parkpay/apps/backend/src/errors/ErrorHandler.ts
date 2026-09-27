@@ -3,32 +3,43 @@ import {RequestValidationError} from "./RequestValidationError.js";
 import {PaymentNotFoundError} from "./PaymentNotFoundError.js";
 import {PaymentConflictError} from "./PaymentConflictError.js";
 
-export const errorHandler: ErrorRequestHandler = (error, _req, res, _next) => {
+export const errorHandler: ErrorRequestHandler = (error, req, res, _next) => {
+
     if (error instanceof RequestValidationError) {
+        req.log.warn({ err: error }, 'Request validation error');
         res.status(400).json({
-            error: error.message,
-            details: error.issues
+            title: 'Invalid request',
+            status: 400,
+            traceId: req.id,
         });
         return;
     }
 
     if (error instanceof PaymentNotFoundError) {
+        req.log.warn( { err: error }, 'Payment not found');
         res.status(404).json({
-            error: error.message
+            title: 'Payment not found',
+            status: 404,
+            traceId: req.id,
         });
         return;
     }
 
     if (error instanceof PaymentConflictError){
+        req.log.warn( {err: error}, 'Payment conflict')
         res.status(409).json({
-            error: error.message
+            title: 'Payment conflict',
+            status: 409,
+            traceId: req.id,
         });
         return;
     }
 
-    console.error(error);
+    req.log.error( { err: error }, 'Unexpected application error');
 
     res.status(500).json({
-        error: 'Internal server error'
+        title: 'Internal server error',
+        status: 500,
+        traceId: req.id,
     });
-}
+};
