@@ -71,7 +71,6 @@ export default function Home() {
                                 <div className="payment-section">
                                     <div className="payment-title">Zahlungsmethode</div>
                                     <button className="paypal-placeholder" type="button">PayPal</button>
-                                    <p className="payment-hint">PayPal-Integration folgt</p>
                                 </div>
                             </>
                         )}
