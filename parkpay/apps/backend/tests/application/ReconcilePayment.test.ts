@@ -18,6 +18,7 @@ function createRepositoryMock() {
             vi.fn<PaymentRepository['findByParkingId']>(),
         findByStatus:
             vi.fn<PaymentRepository['findByStatus']>(),
+        findPendingDue: vi.fn<PaymentRepository['findPendingDue']>(),
     };
 }
 

@@ -7,4 +7,5 @@ export interface PaymentRepository {
     findByIdempotencyKey(idempotencyKey: string): Promise<Payment | null>
     findByParkingId(parkingId: number): Promise<Payment | null>
     findByStatus(status: PaymentStatus): Promise<Payment[]>
+    findPendingDue(now: Date): Promise<Payment[]>
 }

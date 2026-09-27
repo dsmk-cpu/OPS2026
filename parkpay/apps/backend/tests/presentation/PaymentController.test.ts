@@ -16,12 +16,10 @@ function createRepositoryMock() {
     return {
         save: vi.fn<PaymentRepository['save']>(),
         findById: vi.fn<PaymentRepository['findById']>(),
-        findByIdempotencyKey:
-            vi.fn<PaymentRepository['findByIdempotencyKey']>(),
-        findByParkingId:
-            vi.fn<PaymentRepository['findByParkingId']>(),
-        findByStatus:
-            vi.fn<PaymentRepository['findByStatus']>(),
+        findByIdempotencyKey: vi.fn<PaymentRepository['findByIdempotencyKey']>(),
+        findByParkingId: vi.fn<PaymentRepository['findByParkingId']>(),
+        findByStatus: vi.fn<PaymentRepository['findByStatus']>(),
+        findPendingDue: vi.fn<PaymentRepository['findPendingDue']>(),
     };
 }
 
