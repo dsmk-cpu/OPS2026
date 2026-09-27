@@ -5,7 +5,8 @@ export default function Home() {
     const [licensePlate, setLicensePlate] = useState("");
     const [showPayment, setShowPayment] = useState(false);
 
-    const isValid = licensePlate.trim().length > 0;
+    const licensePlateRegex = /^[A-ZÄÖÜ]-{1,3}[A-ZÄÖÜ]{1,2}\s?\d{1,4}$/;
+    const isValid = licensePlateRegex.test(licensePlate.trim());
 
     const handleContinue = () => {
         if (!isValid) return;
