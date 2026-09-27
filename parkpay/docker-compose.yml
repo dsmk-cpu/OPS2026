@@ -6,11 +6,11 @@ services:
 
     container_name: parkpay-backend
 
+    env_file:
+      - ./apps/backend/.env
+
     environment:
       NODE_ENV: development
-      PORT: 3000
-      DATABASE_PATH: /app/data/parkpay.sqlit
-
 
     ports:
       - "3000:3000"

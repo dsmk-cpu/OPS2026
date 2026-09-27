@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
+import {PaymentEntity} from "../infrastructure/persistence/PaymentEntity.js";
 
 export const AppDataSource = new DataSource({
     type: 'better-sqlite3',
@@ -8,7 +9,9 @@ export const AppDataSource = new DataSource({
         process.env.DATABASE_PATH ??
         './data/parkpay.sqlite',
 
-    entities: [],
+    entities: [PaymentEntity],
+
+    migrations: ['./dist/src/infrastructure/persistence/migrations/*.js'],
 
     synchronize: false,
     logging: false,
