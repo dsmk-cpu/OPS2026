@@ -10,8 +10,13 @@ import {errorHandler} from "./errors/ErrorHandler.js";
 import {pinoHttp} from "pino-http";
 import {logger} from "./infrastructure/logging/logger.js";
 import {randomUUID} from "node:crypto";
+import {apiKeyAuth} from "./presentation/middleware/apiKeyAuth.js";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
 export const app = express();
+
+app.use(helmet());
 
 app.disable('x-powered-by');
 
@@ -31,13 +36,19 @@ app.use(
     }),
 );
 
-const paymentRepository = new PaymentOrmRepository(AppDataSource.getRepository(PaymentEntity));
+export const paymentRepository = new PaymentOrmRepository(AppDataSource.getRepository(PaymentEntity));
 const createPayment  = new CreatePayment(paymentRepository);
 const getPayment  = new GetPayment(paymentRepository);
 const paymentController = new PaymentController(createPayment, getPayment);
 
+const parkPayRateLimit = rateLimit({
+    windowMs: 60_000,
+    limit: 60,
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
-app.use('/parkpay/v1', createPaymentRouter(paymentController));
+app.use('/parkpay/v1', parkPayRateLimit, apiKeyAuth, createPaymentRouter(paymentController));
 
 app.get('/health', (_req, res) => {
     res.status(200).json({
