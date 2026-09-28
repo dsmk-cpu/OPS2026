@@ -18,6 +18,8 @@ export interface ExecutePaymentResult {
 
 export interface QueryPaymentStatusRequest {
     idempotencyKey: string;
+    providerReference?: string;
+    paymentId: string;
 }
 
 export interface QueryPaymentStatusResult {

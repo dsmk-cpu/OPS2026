@@ -6,6 +6,7 @@ import {ProcessPayment} from "./application/services/ProcessPayment.js";
 import {ReconcilePayment} from "./application/services/ReconcilePayment.js";
 import {PaymentWorker} from "./application/services/PaymentWorker.js";
 import {PaymentWorkerScheduler} from "./infrastructure/worker/PaymentWorkerScheduler.js";
+import {createPaymentProvider} from "./infrastructure/payment/createPaymentProvider.js";
 
 const port = Number(process.env.PORT ?? 3000);
 
@@ -17,7 +18,7 @@ async function start(): Promise<void> {
         await AppDataSource.runMigrations();
         logger.info('Database migrations complete.');
 
-        const paymentProvider = new MockPaymentProvider(MockPaymentProviderMode.TIMEOUT_AFTER_PROCESSING);
+        const paymentProvider = createPaymentProvider();
         const processPayment = new ProcessPayment(paymentRepository, paymentProvider);
         const reconcilePayment = new ReconcilePayment(paymentRepository, paymentProvider);
         const paymentWorker = new PaymentWorker(paymentRepository, processPayment, reconcilePayment, logger);
