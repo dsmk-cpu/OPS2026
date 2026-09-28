@@ -51,6 +51,22 @@ jobs:
       - name: Build Docker images
         run: docker compose build
 
+      - name: Scan backend image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: parkpay-backend:ci
+          format: 'table'
+          exit-code: 1
+          severity: 'HIGH,CRITICAL'
+
+      - name: Scan frontend image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: parkpay-frontend:ci
+          format: 'table'
+          exit-code: 1
+          severity: 'HIGH,CRITICAL'
+
   codeql:
     runs-on: ubuntu-latest
 

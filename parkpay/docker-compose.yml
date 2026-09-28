@@ -1,5 +1,6 @@
 services:
   backend:
+    image: parkpay-backend:ci
     build:
       context: .
       dockerfile: apps/backend/Dockerfile
@@ -22,6 +23,7 @@ services:
     restart: unless-stopped
 
   frontend:
+    image: parkpay-frontend:ci
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile
