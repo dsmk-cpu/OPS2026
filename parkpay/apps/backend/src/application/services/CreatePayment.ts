@@ -18,38 +18,40 @@ export class CreatePayment {
     ){}
 
     async execute(command: CreatePaymentCommand): Promise<CreatePaymentResult> {
+        const existingPayment =
+            await this.paymentRepository.findByParkingId(command.parkingId);
+
+        if (existingPayment) {
+            this.checkIfSamePayment(existingPayment, command);
+            return this.toResult(existingPayment, false);
+        }
+
         const paymentId = this.generateId();
+
         const payment = Payment.create({
             id: paymentId,
             parkingId: command.parkingId,
-            idempotencyKey: `parking:${command.parkingId}`,
+            idempotencyKey: `payment:${paymentId}`,
             licensePlate: command.licensePlate,
             amountInCents: command.amountInCents,
             currency: Currency.EUR,
-            now: this.clock()
+            now: this.clock(),
         });
 
-        const existingPayment = await this.paymentRepository.findByParkingId(command.parkingId);
-
-        if (existingPayment) {
-            this.checkIfSamePayment(existingPayment, payment);
-            return this.toResult(existingPayment, false)
-        }
-
-       await this.paymentRepository.save(payment);
-
-       return this.toResult(payment, true);
+        await this.paymentRepository.save(payment);
+        return this.toResult(payment, true);
     }
 
 
 
-    private checkIfSamePayment(existing: Payment, payment: Payment): void {
-        const sameLicensePlate = existing.licensePlate === payment.licensePlate;
-        const sameAmountInCents = existing.amountInCents === payment.amountInCents;
-        const sameCurrency = existing.currency === payment.currency;
+    private checkIfSamePayment(existing: Payment, command: CreatePaymentCommand): void {
+        const normalizedLicensePlate = command.licensePlate.trim().toUpperCase();
+        const sameLicensePlate = existing.licensePlate === normalizedLicensePlate;
+        const sameAmountInCents = existing.amountInCents === command.amountInCents;
+        const sameCurrency = existing.currency === Currency.EUR;
 
         if (!sameLicensePlate || !sameAmountInCents || !sameCurrency) {
-            throw new PaymentConflictError(payment.parkingId);
+            throw new PaymentConflictError(command.parkingId);
         }
     }
 

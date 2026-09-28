@@ -23,9 +23,15 @@ export class ReconcilePayment {
         let result;
 
         try {
-            result = await this.paymentProvider.queryStatus({
+            const query = {
                 idempotencyKey: payment.idempotencyKey,
-            });
+                paymentId: payment.id,
+                ...(payment.paymentProviderReference
+                    ? { providerReference: payment.paymentProviderReference }
+                    : {}),
+            };
+            result = await this.paymentProvider.queryStatus(query);
+
         } catch (error){
             if (error instanceof PaymentProviderConnectionError) {
                 const now = this.clock();
@@ -33,7 +39,8 @@ export class ReconcilePayment {
                 const retryDelay = this.calculateRetryDelay(payment.retryCount);
                 const nextRetryAt = new Date(now.getTime() + retryDelay);
 
-                payment.registerFailedAttempts(nextRetryAt, now);
+                payment.markForReconciliation(nextRetryAt, now);
+
                 await this.paymentRepository.save(payment);
                 return;
             }
