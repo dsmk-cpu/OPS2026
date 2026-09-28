@@ -68,7 +68,7 @@ describe('CreatePaymentService', () => {
         expect(savedPayment?.licensePlate).toBe('GI XY 123');
         expect(savedPayment?.amountInCents).toBe(1250);
         expect(savedPayment?.status).toBe(PaymentStatus.PENDING);
-        expect(savedPayment?.idempotencyKey).toBe('parking:123');
+        expect(savedPayment?.idempotencyKey).toBe('payment:payment1');
     });
 
     it('returns an identical existing payment', async () => {
@@ -122,6 +122,29 @@ describe('CreatePaymentService', () => {
             }),
         ).rejects.toBeInstanceOf(PaymentConflictError,);
 
+        expect(repository.save).not.toHaveBeenCalled();
+    });
+
+    it('returns existing payment for same parkingId and same data', async () => {
+        const existingPayment = Payment.create({
+            id: 'existing-payment',
+            parkingId: 123,
+            idempotencyKey: 'payment:existing-payment',
+            licensePlate: 'DIL AB 123',
+            amountInCents: 1250,
+            currency: Currency.EUR,
+        });
+
+        repository.findByParkingId.mockResolvedValue(existingPayment);
+
+        const result = await service.execute({
+            parkingId: 123,
+            licensePlate: 'DIL AB 123',
+            amountInCents: 1250,
+        });
+
+        expect(result.created).toBe(false);
+        expect(result.id).toBe('existing-payment');
         expect(repository.save).not.toHaveBeenCalled();
     });
 });

@@ -3,6 +3,7 @@ import { MockPaymentProvider, MockPaymentProviderMode } from '../../src/infrastr
 import { PaymentProviderStatus, type ExecutePaymentRequest } from '../../src/ports/PaymentProvider.js';
 import { PaymentProviderConnectionError } from '../../src/errors/PaymentProviderConnectionError.js';
 import { PaymentProviderError } from '../../src/errors/PaymentProviderError.js';
+import {PaymentProviderUncertainOutcomeError} from "../../src/errors/PaymentProviderUncertainOutcomeError.js";
 
 const request: ExecutePaymentRequest = {
     paymentId: 'payment-1',
@@ -69,7 +70,7 @@ describe('MockPaymentProvider', () => {
         await expect(
             provider.execute(request)
         ).rejects.toBeInstanceOf(
-            PaymentProviderConnectionError
+            PaymentProviderUncertainOutcomeError
         );
     });
 
@@ -98,6 +99,7 @@ describe('MockPaymentProvider', () => {
 
         const result = await provider.queryStatus({
             idempotencyKey: request.idempotencyKey,
+            paymentId: request.paymentId
         });
 
         expect(result).toEqual({
@@ -115,6 +117,7 @@ describe('MockPaymentProvider', () => {
 
         const result = await provider.queryStatus({
             idempotencyKey: request.idempotencyKey,
+            paymentId: request.paymentId
         });
 
         expect(result).toEqual({
@@ -129,7 +132,8 @@ describe('MockPaymentProvider', () => {
         );
 
         const result = await provider.queryStatus({
-            idempotencyKey: 'unknown-payment',
+            idempotencyKey: request.idempotencyKey,
+            paymentId: request.paymentId
         });
 
         expect(result).toEqual({

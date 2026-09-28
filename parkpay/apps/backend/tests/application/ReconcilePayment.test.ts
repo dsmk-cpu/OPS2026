@@ -50,6 +50,7 @@ describe('ReconcilePayment', () => {
         await reconcilePayment.execute('payment-1');
 
         expect(payment.status).toBe(PaymentStatus.PAID);
+        expect(payment.requiresReconciliation).toBe(false);
         expect(payment.paymentProviderReference).toBe('mock:payment-1');
         expect(payment.nextRetryAt).toBeNull();
         expect(repository.save).toHaveBeenCalledTimes(2);
@@ -105,6 +106,7 @@ describe('ReconcilePayment', () => {
 
         expect(payment.status).toBe(PaymentStatus.PENDING);
         expect(payment.retryCount).toBe(1);
+        expect(payment.requiresReconciliation).toBe(true);
         expect(payment.lastAttemptAt).toEqual(new Date('2026-09-27T10:05:00.000Z'));
         expect(payment.nextRetryAt).toEqual(new Date('2026-09-27T10:05:30.000Z'));
         expect(repository.save).toHaveBeenCalledOnce();
