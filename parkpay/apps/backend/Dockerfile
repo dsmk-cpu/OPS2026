@@ -1,4 +1,4 @@
-FROM node:24-bookworm-slim AS build
+FROM node:24-trixie-slim AS build
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ WORKDIR /app/apps/backend
 RUN npm run build
 
 
-FROM node:24-bookworm-slim AS runtime
+FROM node:24-trixie-slim AS runtime
 
 WORKDIR /app
 
