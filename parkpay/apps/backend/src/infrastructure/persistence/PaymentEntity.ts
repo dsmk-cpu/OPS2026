@@ -32,6 +32,9 @@ export class PaymentEntity {
     @Column( {type: 'integer', default: 0} )
     retryCount!: number;
 
+    @Column( {type: 'boolean', default: false } )
+    requiresReconciliation!: boolean;
+
     @Column( {type: 'datetime', nullable: true} )
     nextRetryAt!: Date | null;
 

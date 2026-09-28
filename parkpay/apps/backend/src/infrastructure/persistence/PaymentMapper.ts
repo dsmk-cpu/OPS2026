@@ -14,10 +14,11 @@ export class PaymentMapper {
             paymentProviderReference:
             entity.paymentProviderReference,
             retryCount: entity.retryCount,
+            requiresReconciliation: entity.requiresReconciliation,
             nextRetryAt: entity.nextRetryAt,
             lastAttemptAt: entity.lastAttemptAt,
             createdAt: entity.createdAt,
-            updatedAt: entity.updatedAt,
+            updatedAt: entity.updatedAt
         })
     }
 
@@ -33,6 +34,7 @@ export class PaymentMapper {
         entity.status = domain.status;
         entity.paymentProviderReference = domain.paymentProviderReference;
         entity.retryCount = domain.retryCount;
+        entity.requiresReconciliation = domain.requiresReconciliation;
         entity.nextRetryAt = domain.nextRetryAt;
         entity.lastAttemptAt = domain.lastAttemptAt;
         entity.createdAt = domain.createdAt;

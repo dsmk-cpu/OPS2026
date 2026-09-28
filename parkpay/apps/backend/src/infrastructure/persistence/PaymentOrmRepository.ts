@@ -45,4 +45,16 @@ export class PaymentOrmRepository implements PaymentRepository{
 
         return entities.map(PaymentMapper.toDomain);
     }
+
+    async findPendingDue(now: Date): Promise<Payment[]> {
+        const entities = await this.repository
+            .createQueryBuilder('payment')
+            .where('payment.status = :status', {status : PaymentStatus.PENDING })
+            .andWhere('(payment.nextRetryAt IS NULL OR payment.nextRetryAt <= :now)', { now })
+            .getMany();
+
+        return entities.map((entity) =>
+            PaymentMapper.toDomain(entity)
+        );
+    }
 }

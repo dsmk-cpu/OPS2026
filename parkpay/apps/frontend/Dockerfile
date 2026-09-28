@@ -1,4 +1,4 @@
-FROM node:24-bookworm-slim
+FROM node:24-trixie-slim AS build
 
 WORKDIR /app
 
@@ -11,6 +11,17 @@ COPY apps/frontend ./apps/frontend
 
 WORKDIR /app/apps/frontend
 
-EXPOSE 5173
+RUN npm run build
 
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+FROM nginx:alpine AS runtime
+
+RUN apk update && apk upgrade --no-cache
+
+COPY --from=build \
+    /app/apps/frontend/dist \
+    /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

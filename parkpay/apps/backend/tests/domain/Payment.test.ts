@@ -270,4 +270,42 @@ describe('Payment.registerFailedAttempts', () => {
         expect(payment.retryCount).toBe(0);
         expect(payment.status).toBe(PaymentStatus.PAID);
     });
+
+    it('schedules a status check without increasing retry count', () => {
+        const payment = Payment.create({
+            id: 'payment-1',
+            parkingId: 123,
+            idempotencyKey: 'parking:123',
+            licensePlate: 'GI-AB-123',
+            amountInCents: 1250,
+            currency: Currency.EUR,
+            now: new Date('2026-09-27T10:00:00.000Z'),
+        });
+
+        const attemptedAt =
+            new Date('2026-09-27T10:05:00.000Z');
+
+        const nextRetryAt =
+            new Date('2026-09-27T10:10:00.000Z');
+
+        payment.scheduleStatusCheck(
+            nextRetryAt,
+            attemptedAt
+        );
+
+        expect(payment.status)
+            .toBe(PaymentStatus.PENDING);
+
+        expect(payment.retryCount)
+            .toBe(0);
+
+        expect(payment.lastAttemptAt)
+            .toEqual(attemptedAt);
+
+        expect(payment.nextRetryAt)
+            .toEqual(nextRetryAt);
+
+        expect(payment.updatedAt)
+            .toEqual(attemptedAt);
+    });
 })

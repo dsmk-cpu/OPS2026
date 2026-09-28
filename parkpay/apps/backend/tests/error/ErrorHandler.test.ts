@@ -78,7 +78,7 @@ describe('ErrorHandler', () => {
 
     it('returns 404 for PaymentNotFoundError', async () => {
         const app = createTestApp(
-            new PaymentNotFoundError(123)
+            new PaymentNotFoundError(123, 'parkingId')
         );
 
         const response = await request(app)

@@ -28,6 +28,7 @@ export interface RestorePaymentValues {
     lastAttemptAt: Date | null;
     createdAt: Date;
     updatedAt: Date;
+    requiresReconciliation: boolean;
 }
 
 interface PaymentState {
@@ -44,6 +45,7 @@ interface PaymentState {
     lastAttemptAt: Date | null;
     readonly createdAt: Date;
     updatedAt: Date;
+    requiresReconciliation: boolean;
 }
 
 
@@ -109,6 +111,10 @@ export class Payment {
         return this.state.updatedAt;
     }
 
+    get requiresReconciliation(): boolean {
+        return this.state.requiresReconciliation;
+    }
+
 
     static create(values: CreatePaymentValues): Payment {
         Payment.validatePaymentValues(values);
@@ -130,6 +136,7 @@ export class Payment {
             lastAttemptAt: null,
             createdAt: now,
             updatedAt: now,
+            requiresReconciliation: false
             }
         );
     }
@@ -155,6 +162,7 @@ export class Payment {
             lastAttemptAt: values.lastAttemptAt,
             createdAt: values.createdAt,
             updatedAt: values.updatedAt,
+            requiresReconciliation: values.requiresReconciliation
         });
     }
 
@@ -172,6 +180,7 @@ export class Payment {
 
         this.state.status = PaymentStatus.PAID;
         this.state.paymentProviderReference = cleanedReference;
+        this.state.requiresReconciliation = false;
         this.state.lastAttemptAt = timestamp;
         this.state.nextRetryAt = null;
         this.state.updatedAt = timestamp;
@@ -179,7 +188,7 @@ export class Payment {
 
     markCaptured(occurredAt : Date = new Date()): void {
         if (this.state.status !== PaymentStatus.PAID ) {
-            throw new InvalidPaymentTransitionError(this.state.status, PaymentStatus.PAID);
+            throw new InvalidPaymentTransitionError(this.state.status, PaymentStatus.CAPTURED);
         }
 
         if (this.state.paymentProviderReference === null) {
@@ -200,6 +209,8 @@ export class Payment {
 
         this.state.status = PaymentStatus.CANCELED;
         this.state.nextRetryAt = null;
+        this.state.requiresReconciliation = false;
+        this.state.lastAttemptAt = occurredAt;
         this.state.updatedAt = occurredAt;
     }
 
@@ -217,10 +228,50 @@ export class Payment {
         }
 
         this.state.retryCount += 1;
+        this.state.requiresReconciliation = false;
         this.state.lastAttemptAt = attemptedAt;
         this.state.nextRetryAt = nextRetryAt;
         this.state.updatedAt = attemptedAt;
     }
+
+    scheduleStatusCheck(nextRetryAt: Date, attemptedAt: Date = new Date()): void {
+        if (this.state.status !== PaymentStatus.PENDING) {
+            throw new InvalidPaymentError('Only a pending payment can schedule a status check.');
+        }
+
+        if (Number.isNaN(nextRetryAt.getTime()) || Number.isNaN(attemptedAt.getTime())) {
+            throw new InvalidPaymentError('Status check timestamps must be valid dates.');
+        }
+
+        if (nextRetryAt.getTime() <= attemptedAt.getTime()) {
+            throw new InvalidPaymentError('Next status check must be after the current attempt.');
+        }
+
+        this.state.lastAttemptAt = attemptedAt;
+        this.state.requiresReconciliation = true;
+        this.state.nextRetryAt = nextRetryAt;
+        this.state.updatedAt = attemptedAt;
+    }
+
+    markForReconciliation(nextRetryAt: Date, attemptedAt: Date = new Date()): void {
+        if (this.state.status !== PaymentStatus.PENDING) {
+            throw new InvalidPaymentError('Only a pending payment can require reconciliation.');
+        }
+
+        if (Number.isNaN(nextRetryAt.getTime()) || Number.isNaN(attemptedAt.getTime())) {
+            throw new InvalidPaymentError('Reconciliation timestamps must be valid dates.');
+        }
+
+        if (nextRetryAt.getTime() <= attemptedAt.getTime()){
+            throw new InvalidPaymentError('Next reconciliation timestamp must be after current attempt.');
+        }
+
+        this.state.retryCount += 1;
+        this.state.requiresReconciliation = true;
+        this.state.lastAttemptAt = attemptedAt;
+        this.state.nextRetryAt = nextRetryAt;
+        this.state.updatedAt = attemptedAt;
+}
 
 
 

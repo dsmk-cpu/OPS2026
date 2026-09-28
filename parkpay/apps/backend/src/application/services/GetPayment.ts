@@ -11,7 +11,7 @@ export class GetPayment {
         const payment = await this.paymentRepository.findByParkingId(parkingId);
 
         if (!payment){
-            throw new PaymentNotFoundError(parkingId);
+            throw new PaymentNotFoundError(parkingId, 'parkingId');
         }
 
         return {
