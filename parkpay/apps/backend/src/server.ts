@@ -12,8 +12,10 @@ const port = Number(process.env.PORT ?? 3000);
 async function start(): Promise<void> {
     try {
         await AppDataSource.initialize();
-
         logger.info('Database connection established.');
+
+        await AppDataSource.runMigrations();
+        logger.info('Database migrations complete.');
 
         const paymentProvider = new MockPaymentProvider(MockPaymentProviderMode.TIMEOUT_AFTER_PROCESSING);
         const processPayment = new ProcessPayment(paymentRepository, paymentProvider);
