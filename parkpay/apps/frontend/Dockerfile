@@ -16,6 +16,8 @@ RUN npm run build
 
 FROM nginx:alpine AS runtime
 
+RUN apk update && apk upgrade --no-cache
+
 COPY --from=build \
     /app/apps/frontend/dist \
     /usr/share/nginx/html
