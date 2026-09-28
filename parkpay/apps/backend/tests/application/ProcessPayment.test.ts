@@ -11,13 +11,9 @@ function createRepositoryMock() {
     return {
         save: vi.fn<PaymentRepository['save']>(),
         findById: vi.fn<PaymentRepository['findById']>(),
-        findByIdempotencyKey:
-            vi.fn<PaymentRepository['findByIdempotencyKey']>(),
-        findByParkingId:
-            vi.fn<PaymentRepository['findByParkingId']>(),
-        findByStatus:
-            vi.fn<PaymentRepository['findByStatus']>(),
-
+        findByIdempotencyKey: vi.fn<PaymentRepository['findByIdempotencyKey']>(),
+        findByParkingId: vi.fn<PaymentRepository['findByParkingId']>(),
+        findByStatus: vi.fn<PaymentRepository['findByStatus']>(),
         findPendingDue: vi.fn<PaymentRepository['findPendingDue']>(),
     };
 }
@@ -177,7 +173,6 @@ describe('ProcessPayment', () => {
             now: new Date('2026-09-27T10:00:00.000Z'),
         });
 
-        // Erster fehlgeschlagener Versuch
         payment.registerFailedAttempts(new Date('2026-09-27T10:05:30.000Z'), new Date('2026-09-27T10:05:00.000Z'));
 
         expect(payment.retryCount).toBe(1);
@@ -188,7 +183,6 @@ describe('ProcessPayment', () => {
 
         const processPayment = new ProcessPayment(repository, provider, () => new Date('2026-09-27T10:10:00.000Z'));
 
-        // Zweiter fehlgeschlagener Versuch
         await processPayment.execute('payment-1');
 
         expect(payment.status).toBe(PaymentStatus.PENDING);
@@ -197,5 +191,39 @@ describe('ProcessPayment', () => {
         expect(payment.nextRetryAt).toEqual(new Date('2026-09-27T10:11:00.000Z'));
         expect(repository.save).toHaveBeenCalledOnce();
         expect(repository.save).toHaveBeenCalledWith(payment);
+    });
+
+    it('caps retry delay at 30 minutes', async () => {
+        const repository = createRepositoryMock();
+
+        const payment = Payment.create({
+            id: 'payment-1',
+            parkingId: 123,
+            idempotencyKey: 'parking:123',
+            licensePlate: 'DIL-AB-12',
+            amountInCents: 1250,
+            currency: Currency.EUR,
+            now: new Date('2026-09-28T10:00:00.000Z'),
+        });
+
+        for (let i = 0; i < 10; i++) {
+            payment.registerFailedAttempts(
+                new Date(`2026-09-28T10:${String(i + 1).padStart(2, '0')}:30.000Z`),
+                new Date(`2026-09-28T10:${String(i + 1).padStart(2, '0')}:00.000Z`)
+            );
+        }
+
+        repository.findById.mockResolvedValue(payment);
+
+        const provider = new MockPaymentProvider(MockPaymentProviderMode.OFFLINE);
+
+        const processPayment = new ProcessPayment(
+            repository,
+            provider,
+            () => new Date('2026-09-28T11:00:00.000Z')
+        );
+
+        await processPayment.execute('payment-1');
+        expect(payment.nextRetryAt).toEqual(new Date('2026-09-28T11:30:00.000Z'));
     });
 });

@@ -3,6 +3,7 @@ import {PaymentProvider, PaymentProviderStatus} from "../../ports/PaymentProvide
 import {PaymentNotFoundError} from "../../errors/PaymentNotFoundError.js";
 import {PaymentProviderError} from "../../errors/PaymentProviderError.js";
 import {PaymentProviderConnectionError} from "../../errors/PaymentProviderConnectionError.js";
+import {PaymentProviderUncertainOutcomeError} from "../../errors/PaymentProviderUncertainOutcomeError.js";
 
 
 type Clock = () => Date;
@@ -29,18 +30,28 @@ export class ProcessPayment {
                 idempotencyKey: payment.idempotencyKey
             });
         } catch (error) {
-            if (error instanceof PaymentProviderConnectionError) {
+            if (error instanceof PaymentProviderUncertainOutcomeError) {
+                const now = this.clock();
+
+                const retryDelay = this.calculateRetryDelay(payment.retryCount);
+                const nextRetryAt = new Date(now.getTime() + retryDelay);
+
+                payment.markForReconciliation(nextRetryAt, now);
+                await this.paymentRepository.save(payment);
+                return;
+            }
+
+            if (error instanceof PaymentProviderConnectionError){
                 const now = this.clock();
 
                 const retryDelay = this.calculateRetryDelay(payment.retryCount);
                 const nextRetryAt = new Date(now.getTime() + retryDelay);
 
                 payment.registerFailedAttempts(nextRetryAt, now);
-
                 await this.paymentRepository.save(payment);
-
                 return;
             }
+
             throw error;
         }
         if (res.status === PaymentProviderStatus.PAID){
@@ -69,7 +80,9 @@ export class ProcessPayment {
     }
 
     private calculateRetryDelay(retryCount: number): number {
-        const baseDelay = 30_000;
-        return baseDelay * (2 ** retryCount);
+        const baseDelayMs = 30_000;
+        const maxDelayMs = 30 * 60_000;
+
+        return Math.min(baseDelayMs * (2 ** retryCount), maxDelayMs);
     }
 }

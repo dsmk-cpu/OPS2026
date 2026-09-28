@@ -8,6 +8,7 @@ import {
 } from "../../ports/PaymentProvider.js";
 import {PaymentProviderConnectionError} from "../../errors/PaymentProviderConnectionError.js";
 import {PaymentProviderError} from "../../errors/PaymentProviderError.js";
+import {PaymentProviderUncertainOutcomeError} from "../../errors/PaymentProviderUncertainOutcomeError.js";
 
 
 export enum MockPaymentProviderMode {
@@ -56,7 +57,7 @@ export class MockPaymentProvider implements PaymentProvider {
                     providerReference: `mock:${request.paymentId}`
                 };
                 this.processedPayments.set(request.idempotencyKey, res);
-                throw new PaymentProviderConnectionError('Connection lost after payment processing');
+                throw new PaymentProviderUncertainOutcomeError('Connection lost after payment processing');
 
             case MockPaymentProviderMode.PROVIDER_ERROR:
                 throw new PaymentProviderError('Mock provider error');

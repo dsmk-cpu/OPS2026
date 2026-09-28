@@ -30,7 +30,8 @@ export class ReconcilePayment {
             if (error instanceof PaymentProviderConnectionError) {
                 const now = this.clock();
 
-                const nextRetryAt = new Date(now.getTime() + 30_000);
+                const retryDelay = this.calculateRetryDelay(payment.retryCount);
+                const nextRetryAt = new Date(now.getTime() + retryDelay);
 
                 payment.registerFailedAttempts(nextRetryAt, now);
                 await this.paymentRepository.save(payment);
@@ -57,5 +58,12 @@ export class ReconcilePayment {
             await this.paymentRepository.save(payment);
             return;
         }
+    }
+
+    private calculateRetryDelay(retryCount: number): number {
+        const baseDelayMs = 30_000;
+        const maxDelayMs = 30 * 60_000;
+
+        return Math.min(baseDelayMs * (2 ** retryCount), maxDelayMs);
     }
 }
