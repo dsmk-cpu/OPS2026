@@ -18,12 +18,14 @@ export function createPaymentProvider(): PaymentProvider {
             }
 
 
-            return new StripePaymentProvider(new Stripe(secretKey), {
-                ...(process.env.STRIPE_TEST_PAYMENT_METHOD ? {
-                    testPaymentMethod: process.env.STRIPE_TEST_PAYMENT_METHOD
-                }
-                : {}),
-            });
+            const testPaymentMethod = process.env.STRIPE_TEST_PAYMENT_METHOD;
+
+            return new StripePaymentProvider(
+                new Stripe(secretKey),
+                testPaymentMethod
+                    ? { testPaymentMethod }
+                    : {},
+            );
         }
 
         default:

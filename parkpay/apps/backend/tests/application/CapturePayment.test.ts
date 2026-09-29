@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from "vitest";
-import StripeConstructor from "stripe";
 import {Currency} from "../../src/domain/Currency.js";
 import {Payment} from "../../src/domain/Payment.js";
 import {PaymentRepository} from "../../src/ports/PaymentRepository.js";

@@ -1,7 +1,6 @@
 import {app, paymentRepository} from './app.js';
 import {AppDataSource} from './config/data-source.js';
 import {logger} from "./infrastructure/logging/logger.js";
-import {MockPaymentProvider, MockPaymentProviderMode} from "./infrastructure/payment/MockPaymentProvider.js";
 import {ProcessPayment} from "./application/services/ProcessPayment.js";
 import {ReconcilePayment} from "./application/services/ReconcilePayment.js";
 import {PaymentWorker} from "./application/services/PaymentWorker.js";
