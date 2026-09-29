@@ -1,14 +1,14 @@
-# Technologie Stack
-ParkPay is implemented as a Typescript monorepo with seperate backend and frontend applications.
+# Technology Stack
+ParkPay is implemented as a TypeScript monorepo with seperate backend and frontend applications.
 
 ## Backend
 - Node.js 24
-- Typescript
+- TypeScript
 - Express
 - TypeORM
 - SQLite
 - Stripe SDK
-- Vites
+- Vitest
 - Supertest
 - Zod
 - Pino

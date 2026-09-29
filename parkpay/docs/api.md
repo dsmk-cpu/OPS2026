@@ -50,6 +50,65 @@ In parkPay, money is stored in cents (using an integer). Therefore, `12.50` beco
 
 ````json
 {
-  "id": 
+  "id": "62f17978-5d6c-46dc-826b-d87b192934ac",
+  "parkingId": 131,
+  "status": "PENDING"
 }
+````
+
+### Idempotency
+`parkingId` is used to check for duplicate requests.  
+If the same `parkingId` is used again with the same payment data, then parkPay returns
+the existing payment instead of creating another payment.  
+
+If the same `parkingId` is submitted with conflicting data, parkPay returns a conflict.  
+
+
+## Get Payment Status
+````http request
+GET /parkpay/v1/:parkingId
+````
+
+Example:
+````http request
+GET /parkpay/v1/131
+````
+
+### Headers
+````http request
+x-api-key: <PARKPAY_API_KEY>
+````
+
+### Example Response
+````json
+{
+  "status": "PENDING"
+}
+````
+
+### Payment States
+- `PENDING`: payment created locally, retry scheduled, provider pending or reconciliation required
+- `PAID`: provider confirmed the payment
+- `CAPTURED`: payment transitioned from `PAID` to captured
+- `CANCELED`: payment was canceled or declined
+
+
+
+## curl Examples
+Create payment:
+````shell
+curl -X POST http://localhost:3000/parkpay/v1 \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: testKey" \
+  -d '{
+        "id": 123,
+        "kennzeichen": "DIL AB 12",
+        "betrag": "12.50"  
+      }'
+````
+
+Get payment status:
+````shell
+curl http://localhost:3000/parkpay/v1/123 \
+  -H "x-api-key: testKey"
 ````
