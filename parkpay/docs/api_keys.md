@@ -24,7 +24,7 @@ Use the Stripe Test Mode during development.
 1. Go to [Stripe Dashboard login](https://dashboard.stripe.com/login)
 2. Create an account or Log in
 3. Click on your User-icon in the top-left corner and switch to your Sandbox (or create a Sandbox)
-4. Click on API-Keys and copy-paste the Token of the secret key into your local environment file
+4. Click on API-Keys and copy-paste the Token of the test secret key into your local environment file
 
 ````dotenv
 STRIPE_SECRET_KEY=YOUR_STRIPE_API_KEY

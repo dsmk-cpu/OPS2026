@@ -24,34 +24,61 @@ Only use npm install when updating dependencies or the lock file.
 ## Configure Backend
 Create a local environment file based on:
 ````text
-apps/backend/.env.exmaple
+apps/backend/.env.example
 ````
 inside the backend folder ``apps/backend``.
 
 Environment Variables:
 
-| Variable          | Description                                       |
-|-------------------|---------------------------------------------------|
-| DATABASE_PATH     | Path to the local SQLite database file            |
-| PORT              | Port used by the backend server                   |
-| LOG_LEVEL         | Controls backend logging level                    |
-| PARKPAY_API_KEY   | API key required to access the endpoints          |
-| PAYMENT_PROVIDER  | Selects the payment provider, e.g. mock or Stripe |
-| STRIPE_SECRET_KEY | Stripe backend secret key when using Stripe       |
+| Variable                   | Description                                         |
+|----------------------------|-----------------------------------------------------|
+| DATABASE_PATH              | Path to the local SQLite database file              |
+| PORT                       | Port used by the backend server                     |
+| LOG_LEVEL                  | Controls backend logging level                      |
+| PARKPAY_API_KEY            | API key required to access the endpoints            |
+| PAYMENT_PROVIDER           | Selects the payment provider, e.g. mock or Stripe   |
+| MOCK_PAYMENT_MODE          | Behavior of the mock payment provider               |
+| STRIPE_SECRET_KEY          | Stripe backend secret key when using Stripe         |
+| STRIPE_TEST_PAYMENT_METHOD | Stripe test payment method used for sandbox testing |
 
-Example setup with a mock payment provider:
+## Mock Payment Provider
+For local development and controlled tests, ParkPay can use the mock payment provider.
+Example:
+````dotenv
+PAYMENT_PROVIDER=mock
+MOCK_PAYMENT_MODE=ONLINE_SUCCESS
+````
 
+Available mock modes:
+
+| Mode                     | Behavior                                                           |
+|--------------------------|--------------------------------------------------------------------|
+| ONLINE_SUCCESS           | Payment processing succeeds normally                               |
+| OFFLINE                  | Simulates an unavailable payment provider                          |
+| TIMEOUT_AFTER_PROCESSING | Simulates a payment that was processed but whose response was lost |
+| DECLINED                 | Simulates a declined payment                                       |
+| PENDING                  | Provider keeps the payment pending                                 |
+| PROVIDER_ERROR           | Simulates a genernal provider error                                |
+
+Example: Offline Retry
+````dotenv
+PAYMENT_PROVIDER=mock
+MOCK_PAYMENT_MODE=OFFLINE
+````
+Example of a full environment file using mock provider
 ````dotenv
 DATABASE_PATH=./data/parkpay.sqlite
 PORT=3000
 LOG_LEVEL=info
 PARKPAY_API_KEY=YOUR_API_KEY
 PAYMENT_PROVIDER=mock
+MOCK_PAYMENT_MODE=ONLINE_SUCCESS
 STRIPE_SECRET_KEY=
 STRIPE_TEST_PAYMENT_METHOD=                 
 ````
 
-Example setup with Stripe as the payment provider:
+## Stripe Sandbox
+Example of a full environment file using Stripe as the payment provider:
 
 ````dotenv
 DATABASE_PATH=./data/parkpay.sqlite
@@ -59,9 +86,11 @@ PORT=3000
 LOG_LEVEL=info
 PARKPAY_API_KEY=YOUR_API_KEY
 PAYMENT_PROVIDER=stripe
+MOCK_PAYMENT_MODE=
 STRIPE_SECRET_KEY=YOUR_STRIPE_API_KEY
 STRIPE_TEST_PAYMENT_METHOD=pm_card_visa
 ````
+pm_card_visa is used for successful Stripe sandbox payments.
 
 
 ## Start Backend

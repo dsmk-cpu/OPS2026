@@ -7,12 +7,12 @@ import {Stripe} from "stripe";
 import {PaymentProviderError} from "../../src/errors/PaymentProviderError.js";
 
 describe('StripePaymentProvider', () => {
-    it('returns PAID when Stripe PaymentIntent succeeded', async () => {
+    it('returns CAPTURED when Stripe PaymentIntent succeeded', async () => {
         const stripe = {
             paymentIntents: {
                 retrieve: vi.fn().mockResolvedValue({
                     id: 'pi_123',
-                    status: 'succeeded',
+                    status: 'succeeded'
                 }),
             },
         };
@@ -21,15 +21,15 @@ describe('StripePaymentProvider', () => {
 
         const result = await provider.queryStatus({
             paymentId: 'payment-1',
-            idempotencyKey: 'parking:123',
-            providerReference: 'pi_123',
+            idempotencyKey: 'payment:payment-1',
+            providerReference: 'pi_123'
         });
 
         expect(stripe.paymentIntents.retrieve).toHaveBeenCalledWith('pi_123');
 
         expect(result).toEqual({
-            status: PaymentProviderStatus.PAID,
-            providerReference: 'pi_123',
+            status: PaymentProviderStatus.CAPTURED,
+            providerReference: 'pi_123'
         });
     });
 
@@ -38,7 +38,7 @@ describe('StripePaymentProvider', () => {
             paymentIntents: {
                 retrieve: vi.fn().mockResolvedValue({
                     id: 'pi_123',
-                    status: 'requires_payment_method',
+                    status: 'requires_payment_method'
                 }),
             },
         };
@@ -47,13 +47,13 @@ describe('StripePaymentProvider', () => {
 
         const result = await provider.queryStatus({
             paymentId: 'payment-1',
-            idempotencyKey: 'parking:123',
-            providerReference: 'pi_123',
+            idempotencyKey: 'payment:payment-1',
+            providerReference: 'pi_123'
         });
 
         expect(result).toEqual({
             status: PaymentProviderStatus.PENDING,
-            providerReference: 'pi_123',
+            providerReference: 'pi_123'
         });
     });
 
@@ -62,7 +62,7 @@ describe('StripePaymentProvider', () => {
             paymentIntents: {
                 retrieve: vi.fn().mockResolvedValue({
                     id: 'pi_123',
-                    status: 'canceled',
+                    status: 'canceled'
                 }),
             },
         };
@@ -71,13 +71,13 @@ describe('StripePaymentProvider', () => {
 
         const result = await provider.queryStatus({
             paymentId: 'payment-1',
-            idempotencyKey: 'parking:123',
-            providerReference: 'pi_123',
+            idempotencyKey: 'payment:payment-1',
+            providerReference: 'pi_123'
         });
 
         expect(result).toEqual({
             status: PaymentProviderStatus.DECLINED,
-            providerReference: 'pi_123',
+            providerReference: 'pi_123'
         });
     });
 
@@ -86,7 +86,7 @@ describe('StripePaymentProvider', () => {
             paymentIntents: {
                 create: vi.fn().mockResolvedValue({
                     id: 'pi_123',
-                    status: 'succeeded',
+                    status: 'requires_capture'
                 }),
             },
         };
@@ -97,26 +97,27 @@ describe('StripePaymentProvider', () => {
             paymentId: 'payment-1',
             amountInCents: 1250,
             currency: 'EUR',
-            idempotencyKey: 'parking:123',
+            idempotencyKey: 'payment:payment-1'
         });
 
         expect(stripe.paymentIntents.create).toHaveBeenCalledWith(
             {
                 amount: 1250,
                 currency: 'eur',
+                capture_method: 'manual',
                 metadata: {
                     paymentId: 'payment-1',
-                    idempotencyKey: 'parking:123',
+                    idempotencyKey: 'payment:payment-1',
                 },
             },
             {
-                idempotencyKey: 'parking:123',
+                idempotencyKey: 'payment:payment-1',
             },
         );
 
         expect(result).toEqual({
             status: PaymentProviderStatus.PAID,
-            providerReference: 'pi_123',
+            providerReference: 'pi_123'
         });
     });
 
@@ -138,7 +139,7 @@ describe('StripePaymentProvider', () => {
                 paymentId: 'payment-1',
                 amountInCents: 1250,
                 currency: 'EUR',
-                idempotencyKey: 'parking:123',
+                idempotencyKey: 'payment:payment-1'
             }),
         ).rejects.toBeInstanceOf(PaymentProviderConnectionError);
     });
@@ -161,7 +162,7 @@ describe('StripePaymentProvider', () => {
                 paymentId: 'payment-1',
                 amountInCents: 1250,
                 currency: 'EUR',
-                idempotencyKey: 'parking:123',
+                idempotencyKey: 'payment:payment-1'
             }),
         ).rejects.toBeInstanceOf(PaymentProviderError);
     });
@@ -184,7 +185,7 @@ describe('StripePaymentProvider', () => {
                 paymentId: 'payment-1',
                 amountInCents: 1250,
                 currency: 'EUR',
-                idempotencyKey: 'parking:123',
+                idempotencyKey: 'payment:payment-1'
             }),
         ).rejects.toBeInstanceOf(PaymentProviderError,);
     });
@@ -202,7 +203,7 @@ describe('StripePaymentProvider', () => {
 
         const result = await provider.queryStatus({
             paymentId: 'payment-1',
-            idempotencyKey: 'parking:123'
+            idempotencyKey: 'payment:payment-1'
         });
 
         expect(stripe.paymentIntents.search,).toHaveBeenCalledWith({
@@ -234,7 +235,7 @@ describe('StripePaymentProvider', () => {
 
         const result = await provider.queryStatus({
             paymentId: 'payment-1',
-            idempotencyKey: 'parking:123'
+            idempotencyKey: 'payment:payment-1'
         });
 
         expect(stripe.paymentIntents.search).toHaveBeenCalledWith({
@@ -243,7 +244,7 @@ describe('StripePaymentProvider', () => {
         });
 
         expect(result).toEqual({
-            status: PaymentProviderStatus.PAID,
+            status: PaymentProviderStatus.CAPTURED,
             providerReference: 'pi_123'
         });
     });
@@ -261,7 +262,7 @@ describe('StripePaymentProvider', () => {
 
         const result = await provider.queryStatus({
             paymentId: 'payment-1',
-            idempotencyKey: 'parking:123'
+            idempotencyKey: 'payment:payment-1'
         });
 
         expect(result).toEqual({status: PaymentProviderStatus.PENDING});
@@ -271,7 +272,7 @@ describe('StripePaymentProvider', () => {
             paymentIntents: {
                 search: vi.fn().mockRejectedValue(
                     new Stripe.errors.StripeConnectionError({
-                        message: 'Connection failed',
+                        message: 'Connection failed'
                     }),
                 ),
             },
@@ -282,7 +283,7 @@ describe('StripePaymentProvider', () => {
         await expect(
             provider.queryStatus({
                 paymentId: 'payment-1',
-                idempotencyKey: 'parking:123'
+                idempotencyKey: 'payment:payment-1'
             }),
         ).rejects.toBeInstanceOf(
             PaymentProviderConnectionError,
@@ -293,9 +294,7 @@ describe('StripePaymentProvider', () => {
         const stripe = {
             paymentIntents: {
                 create: vi.fn().mockRejectedValue(
-                    new Stripe.errors.StripeCardError({
-                        message: 'Your card was declined.'
-                    }),
+                    new Stripe.errors.StripeCardError({message: 'Your card was declined.'})
                 ),
             },
         };
@@ -311,9 +310,71 @@ describe('StripePaymentProvider', () => {
             paymentId: 'payment-1',
             amountInCents: 1250,
             currency: 'EUR',
-            idempotencyKey: 'parking:131'
+            idempotencyKey: 'payment:payment-1'
         });
 
         expect(result).toEqual({status: PaymentProviderStatus.DECLINED});
+    });
+
+    it('returns PAID when Stripe PaymentIntent requires capture', async () => {
+        const stripe = {
+            paymentIntents: {
+                retrieve: vi.fn().mockResolvedValue({
+                    id: 'pi_123',
+                    status: 'requires_capture'
+                }),
+            },
+        };
+
+        const provider = new StripePaymentProvider(stripe as any);
+
+        const result = await provider.queryStatus({
+            paymentId: 'payment-1',
+            idempotencyKey: 'payment:payment-1',
+            providerReference: 'pi_123'
+        });
+
+        expect(result).toEqual({
+            status: PaymentProviderStatus.PAID,
+            providerReference: 'pi_123'
+        });
+    });
+
+    it('captures an authorized Stripe PaymentIntent', async () => {
+        const stripe = {
+            paymentIntents: {
+                capture: vi.fn().mockResolvedValue({
+                    id: 'pi_123',
+                    status: 'succeeded'
+                }),
+            },
+        };
+
+        const provider = new StripePaymentProvider(stripe as any);
+
+        const result = await provider.capture({providerReference: 'pi_123'});
+
+        expect(stripe.paymentIntents.capture).toHaveBeenCalledWith('pi_123');
+
+        expect(result).toEqual({
+            status: PaymentProviderStatus.CAPTURED,
+            providerReference: 'pi_123'
+        });
+    });
+
+    it('maps Stripe connection error during capture', async () => {
+        const stripe = {
+            paymentIntents: {
+                capture: vi.fn().mockRejectedValue(
+                    new Stripe.errors.StripeConnectionError({
+                        message: 'Connection failed'
+                    }),
+                ),
+            },
+        };
+
+        const provider = new StripePaymentProvider(stripe as any);
+
+        await expect(provider.capture({providerReference: 'pi_123'})).rejects.toBeInstanceOf(PaymentProviderConnectionError);
     });
 });

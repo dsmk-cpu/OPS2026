@@ -234,6 +234,17 @@ export class Payment {
         this.state.updatedAt = attemptedAt;
     }
 
+    registerCaptureFailedAttempt(nextRetryAt: Date, attemptedAt: Date = new Date()): void {
+        if (this.state.status !== PaymentStatus.PAID) {
+            throw new InvalidPaymentError('Only a paid payment can schedule a capture retry.');
+        }
+
+        this.state.retryCount += 1;
+        this.state.lastAttemptAt = attemptedAt;
+        this.state.nextRetryAt = nextRetryAt;
+        this.state.updatedAt = attemptedAt;
+    }
+
     scheduleStatusCheck(nextRetryAt: Date, attemptedAt: Date = new Date()): void {
         if (this.state.status !== PaymentStatus.PENDING) {
             throw new InvalidPaymentError('Only a pending payment can schedule a status check.');

@@ -51,7 +51,7 @@ In parkPay, money is stored in cents (using an integer). Therefore, `12.50` beco
 ````json
 {
   "id": "62f17978-5d6c-46dc-826b-d87b192934ac",
-  "parkingId": 131,
+  "parkingId": 123,
   "status": "PENDING"
 }
 ````
@@ -71,7 +71,7 @@ GET /parkpay/v1/:parkingId
 
 Example:
 ````http request
-GET /parkpay/v1/131
+GET /parkpay/v1/123
 ````
 
 ### Headers
@@ -87,12 +87,15 @@ x-api-key: <PARKPAY_API_KEY>
 ````
 
 ### Payment States
-- `PENDING`: payment created locally, retry scheduled, provider pending or reconciliation required
-- `PAID`: provider confirmed the payment
-- `CAPTURED`: payment transitioned from `PAID` to captured
+- `PENDING`: Payment created locally and is waiting for processing, retry or reconciliation.
+- `PAID`: Payment was successfully authorized by the payment provider but has not been captured yet.
+- `CAPTURED`: The authorized amount was successfully captured and the payment is complete.
 - `CANCELED`: payment was canceled or declined
 
-
+Typical successful flow:
+````text
+PENDING -> PAID -> CAPTURED
+````
 
 ## curl Examples
 Create payment:
