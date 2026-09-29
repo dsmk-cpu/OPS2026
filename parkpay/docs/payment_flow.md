@@ -7,7 +7,7 @@ New payments start with the status: `PENDING`
 
 ````text
 POST /parkpay/v1 -> CreatePayment -> Save locally as PENDING -> PaymentWorker -> ProcessPayment -> PaymentProvider.execute() -> Stripe / Mock -> PAID
- -> PaymentWorker -> CapturePayment ->Y PaymentProvider.Capture() -> CAPTURED
+ -> PaymentWorker -> CapturePayment -> PaymentProvider.Capture() -> CAPTURED
 ````
 After a successful authorization:
 ````text
@@ -17,7 +17,7 @@ nextRetryAt = NULL
 requiresReconciliation = false
 ````
 PAID means that the payment was successfully authorized by the payment provider.
-The payment is then captured in a seperate step.
+The payment is then captured in a separate step.
 
 After a successful capture:
 ````text
@@ -70,12 +70,22 @@ PaymentWorker -> requiresReconciliation?
 If a provider reference (e.g. pi_...) exists, then the payment is queried directly.
 If the reference is missing, Stripe can recover the PaymentIntent using the internal `paymentId` stored inside the Stripe metadata.
 
-A successful reconciliation result:
-````typescript
-status = PAID
+Depending on the current provider state, reconciliation can result in:
+
+```text
+requires_capture -> PAID
+succeeded        -> CAPTURED
+pending          -> PENDING
+````
+
+After a successful reconciliation:
+
+````text
 requiresReconciliation = false
 nextRetryAt = NULL
 ````
+
+If the payment is reconciled as `PAID`, then the worker continues with the capture step afterward.
 
 ## Declined Payment
 If stripe rejects the payment:

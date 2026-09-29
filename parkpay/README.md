@@ -31,23 +31,23 @@ apps/backend/.env.example
 Example configuration:
 ````dotenv
 # Database
-DATABASE_PATH=./data/parkpay.sqlite
-PORT=3000
+DATABASE_PATH=CHANGE_IN_LOCAL_ENV
+PORT=CHANGE_IN_LOCAL_ENV
 
 # Logging
-LOG_LEVEL=info
+LOG_LEVEL=CHANGE_IN_LOCAL_ENV
 
 # API key
-PARKPAY_API_KEY=YOUR_API_KEY
+PARKPAY_API_KEY=CHANGE_IN_LOCAL_ENV
 
 # Payment Provider
 PAYMENT_PROVIDER=mock
-STRIPE_SECRET_KEY=
+MOCK_PAYMENT_MODE=ONLINE_SUCCESS
 ````
 For Stripe Sandbox testing, use the following instead of mock:
 ````dotenv
-PAYMENT_PROVIDER=stripe
-STRIPE_SECRET_KEY=YOUR_STRIPE_TEST_SECRET_KEY
+STRIPE_SECRET_KEY=CHANGE_IN_LOCAL_ENV
+STRIPE_TEST_PAYMENT_METHOD=pm_card_visa
 ````
 
 Start the backend:

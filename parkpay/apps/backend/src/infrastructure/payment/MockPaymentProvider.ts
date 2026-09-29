@@ -25,8 +25,7 @@ export enum MockPaymentProviderMode {
 export class MockPaymentProvider implements PaymentProvider {
     private readonly processedPayments = new Map<string, QueryPaymentStatusResult>();
 
-    constructor(private readonly mode: MockPaymentProviderMode) {
-    }
+    constructor(private readonly mode: MockPaymentProviderMode) {}
 
     async execute(request: ExecutePaymentRequest): Promise<ExecutePaymentResult>{
         switch(this.mode){
@@ -77,20 +76,17 @@ export class MockPaymentProvider implements PaymentProvider {
     async capture(request: CapturePaymentRequest): Promise<CapturePaymentResult> {
         switch (this.mode) {
             case MockPaymentProviderMode.ONLINE_SUCCESS:
+            case MockPaymentProviderMode.TIMEOUT_AFTER_PROCESSING:
                 return {
                     status: PaymentProviderStatus.CAPTURED,
                     providerReference: request.providerReference,
                 };
 
             case MockPaymentProviderMode.OFFLINE:
-                throw new PaymentProviderConnectionError(
-                    "Mock payment provider is offline"
-                );
+                throw new PaymentProviderConnectionError("Mock payment provider is offline");
 
             case MockPaymentProviderMode.PROVIDER_ERROR:
-                throw new PaymentProviderError(
-                    "Mock payment provider error"
-                );
+                throw new PaymentProviderError("Mock payment provider error");
 
             default:
                 return {
