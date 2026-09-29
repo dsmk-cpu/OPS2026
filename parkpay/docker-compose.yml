@@ -17,8 +17,7 @@ services:
       - "3000:3000"
 
     volumes:
-      - ./apps/backend/src:/app/apps/backend/src
-      - parkpay-data:/app/apps/backend/data
+      - ./apps/backend/data:/app/apps/backend/data
 
     restart: unless-stopped
 

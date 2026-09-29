@@ -6,6 +6,7 @@ import {ProcessPayment} from "../../src/application/services/ProcessPayment.js";
 import {ReconcilePayment} from "../../src/application/services/ReconcilePayment.js";
 import {PaymentWorker} from "../../src/application/services/PaymentWorker.js";
 import {Logger} from "pino";
+import {CapturePayment} from "../../src/application/services/CapturePayment.js";
 
 function createRepositoryMock() {
     return {
@@ -14,7 +15,7 @@ function createRepositoryMock() {
         findByIdempotencyKey: vi.fn<PaymentRepository['findByIdempotencyKey']>(),
         findByParkingId: vi.fn<PaymentRepository['findByParkingId']>(),
         findByStatus: vi.fn<PaymentRepository['findByStatus']>(),
-        findPendingDue: vi.fn<PaymentRepository['findPendingDue']>(),
+        findDue: vi.fn<PaymentRepository['findDue']>(),
     };
 }
 
@@ -36,7 +37,7 @@ describe('PaymentWorker', () => {
             now: new Date('2026-09-28T10:00:00.000Z'),
         });
 
-        repository.findPendingDue.mockResolvedValue([payment]);
+        repository.findDue.mockResolvedValue([payment]);
 
         const processPayment = {
             execute: vi.fn(),
@@ -46,10 +47,15 @@ describe('PaymentWorker', () => {
             execute: vi.fn(),
         } as unknown as ReconcilePayment;
 
+        const capturePayment = {
+            execute: vi.fn(),
+        } as unknown as CapturePayment;
+
         const worker = new PaymentWorker(
             repository,
             processPayment,
             reconcilePayment,
+            capturePayment,
             logger,
             () => new Date('2026-09-28T10:05:00.000Z')
 
@@ -57,7 +63,7 @@ describe('PaymentWorker', () => {
 
         await worker.runOnce();
 
-        expect(repository.findPendingDue).toHaveBeenCalledWith(new Date('2026-09-28T10:05:00.000Z'));
+        expect(repository.findDue).toHaveBeenCalledWith(new Date('2026-09-28T10:05:00.000Z'));
         expect(processPayment.execute).toHaveBeenCalledWith('payment-1');
         expect(reconcilePayment.execute).not.toHaveBeenCalled();
     });
@@ -80,7 +86,7 @@ describe('PaymentWorker', () => {
             new Date('2026-09-28T10:05:00.000Z')
         );
 
-        repository.findPendingDue.mockResolvedValue([payment]);
+        repository.findDue.mockResolvedValue([payment]);
 
         const processPayment = {
             execute: vi.fn(),
@@ -90,10 +96,15 @@ describe('PaymentWorker', () => {
             execute: vi.fn(),
         } as unknown as ReconcilePayment;
 
+        const capturePayment = {
+            execute: vi.fn(),
+        } as unknown as CapturePayment;
+
         const worker = new PaymentWorker(
             repository,
             processPayment,
             reconcilePayment,
+            capturePayment,
             logger,
             () => new Date('2026-09-28T10:06:00.000Z')
         );
@@ -127,7 +138,7 @@ describe('PaymentWorker', () => {
             now: new Date('2026-09-28T10:00:00.000Z'),
         });
 
-        repository.findPendingDue.mockResolvedValue([
+        repository.findDue.mockResolvedValue([
             firstPayment,
             secondPayment,
         ]);
@@ -142,10 +153,15 @@ describe('PaymentWorker', () => {
             execute: vi.fn(),
         } as unknown as ReconcilePayment;
 
+        const capturePayment = {
+            execute: vi.fn(),
+        } as unknown as CapturePayment;
+
         const worker = new PaymentWorker(
             repository,
             processPayment,
             reconcilePayment,
+            capturePayment,
             logger,
             () => new Date('2026-09-28T10:05:00.000Z')
         );
@@ -176,7 +192,7 @@ describe('PaymentWorker', () => {
             new Date('2026-09-28T10:05:00.000Z')
         );
 
-        repository.findPendingDue.mockResolvedValue([payment]);
+        repository.findDue.mockResolvedValue([payment]);
 
         const processPayment = {
             execute: vi.fn(),
@@ -186,10 +202,15 @@ describe('PaymentWorker', () => {
             execute: vi.fn(),
         } as unknown as ReconcilePayment;
 
+        const capturePayment = {
+            execute: vi.fn(),
+        } as unknown as CapturePayment;
+
         const worker = new PaymentWorker(
             repository,
             processPayment,
             reconcilePayment,
+            capturePayment,
             logger,
             () => new Date('2026-09-28T10:06:00.000Z')
         );

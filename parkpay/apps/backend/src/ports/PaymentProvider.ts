@@ -2,6 +2,7 @@ export enum PaymentProviderStatus {
     PAID = 'PAID',
     PENDING = 'PENDING',
     DECLINED = 'DECLINED',
+    CAPTURED = 'CAPTURED',
 }
 
 export interface ExecutePaymentRequest {
@@ -27,8 +28,18 @@ export interface QueryPaymentStatusResult {
     providerReference?: string;
 }
 
+export interface CapturePaymentRequest {
+    providerReference: string;
+}
+
+export interface CapturePaymentResult {
+    status: PaymentProviderStatus;
+    providerReference?: string;
+}
+
 export interface PaymentProvider {
     execute(request: ExecutePaymentRequest): Promise<ExecutePaymentResult>;
     queryStatus(request: QueryPaymentStatusRequest): Promise<QueryPaymentStatusResult>;
+    capture(request: CapturePaymentRequest): Promise<CapturePaymentResult>;
 }
 

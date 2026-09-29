@@ -55,11 +55,15 @@ export class ProcessPayment {
             throw error;
         }
         if (res.status === PaymentProviderStatus.PAID){
-            if (!res.providerReference){
+            if (!res.providerReference) {
                 throw new PaymentProviderError('Paid provider result requires a provider reference');
             }
-            payment.markPaid(res.providerReference);
+
+            const now = this.clock();
+
+            payment.markPaid(res.providerReference, now);
             await this.paymentRepository.save(payment);
+
             return;
         }
 

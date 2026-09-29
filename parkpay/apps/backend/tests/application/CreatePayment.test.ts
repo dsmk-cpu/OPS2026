@@ -10,16 +10,11 @@ import {PaymentConflictError} from "../../src/errors/PaymentConflictError.js";
 function createRepositoryMock() {
     return {
         save: vi.fn<PaymentRepository['save']>(),
-
         findById: vi.fn<PaymentRepository['findById']>(),
-
         findByIdempotencyKey: vi.fn<PaymentRepository['findByIdempotencyKey']>(),
-
         findByParkingId: vi.fn<PaymentRepository['findByParkingId']>(),
-
         findByStatus: vi.fn<PaymentRepository['findByStatus']>(),
-
-        findPendingDue: vi.fn<PaymentRepository['findPendingDue']>(),
+        findDue: vi.fn<PaymentRepository['findDue']>(),
     };
 }
 

@@ -1,4 +1,5 @@
 import {
+    CapturePaymentRequest, CapturePaymentResult,
     ExecutePaymentRequest,
     ExecutePaymentResult,
     PaymentProvider,
@@ -71,5 +72,31 @@ export class MockPaymentProvider implements PaymentProvider {
         return this.processedPayments.get(request.idempotencyKey) ?? {
             status: PaymentProviderStatus.PENDING
         };
+    }
+
+    async capture(request: CapturePaymentRequest): Promise<CapturePaymentResult> {
+        switch (this.mode) {
+            case MockPaymentProviderMode.ONLINE_SUCCESS:
+                return {
+                    status: PaymentProviderStatus.CAPTURED,
+                    providerReference: request.providerReference,
+                };
+
+            case MockPaymentProviderMode.OFFLINE:
+                throw new PaymentProviderConnectionError(
+                    "Mock payment provider is offline"
+                );
+
+            case MockPaymentProviderMode.PROVIDER_ERROR:
+                throw new PaymentProviderError(
+                    "Mock payment provider error"
+                );
+
+            default:
+                return {
+                    status: PaymentProviderStatus.PENDING,
+                    providerReference: request.providerReference,
+                };
+        }
     }
 }
