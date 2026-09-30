@@ -16,9 +16,10 @@ import rateLimit from "express-rate-limit";
 
 export const app = express();
 
-app.use(helmet());
+app.set('trust proxy', 1);
 
 app.disable('x-powered-by');
+app.use(helmet());
 
 app.use(pinoHttp({
     logger,

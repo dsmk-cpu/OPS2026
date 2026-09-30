@@ -30,6 +30,9 @@ services:
 
     container_name: parkpay-frontend
 
+    env_file:
+      - ./apps/frontend/.env
+
     ports:
       - "5173:80"
     volumes:
