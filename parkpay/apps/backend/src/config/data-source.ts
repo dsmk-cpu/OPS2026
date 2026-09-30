@@ -2,6 +2,8 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import {PaymentEntity} from "../infrastructure/persistence/PaymentEntity.js";
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 export const AppDataSource = new DataSource({
     type: 'better-sqlite3',
 
@@ -11,8 +13,11 @@ export const AppDataSource = new DataSource({
 
     entities: [PaymentEntity],
 
-    migrations: ['./src/infrastructure/persistence/migrations/*.{ts,js}',
-                './dist/src/infrastructure/persistence/migrations/*.js'],
+    migrations: [
+        isProduction
+            ? './dist/src/infrastructure/persistence/migrations/*.js'
+            : './src/infrastructure/persistence/migrations/*.ts',
+    ],
 
     synchronize: false,
     logging: false,

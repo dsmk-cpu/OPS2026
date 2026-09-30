@@ -30,17 +30,17 @@ inside the backend folder ``apps/backend``.
 
 Environment Variables:
 
-| Variable                   | Description                                                               |
-|----------------------------|---------------------------------------------------------------------------|
-| DATABASE_PATH              | Path to the local SQLite database file                                    |
-| PORT                       | Port used by the backend server                                           |
-| LOG_LEVEL                  | Controls backend logging level                                            |
-| NODE_ENV                   | Defines the runtime environment and controls log formatting               |
-| PARKPAY_API_KEY            | API key required to access the endpoints. Must match the frontend API KEY |
-| PAYMENT_PROVIDER           | Selects the payment provider, e.g. mock or Stripe                         |
-| MOCK_PAYMENT_MODE          | Behavior of the mock payment provider                                     |
-| STRIPE_SECRET_KEY          | Stripe backend secret key when using Stripe                               |
-| STRIPE_TEST_PAYMENT_METHOD | Stripe test payment method used for sandbox testing                       |
+| Variable                   | Description                                                                                                             |
+|----------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| DATABASE_PATH              | Path to the local SQLite database file                                                                                  |
+| PORT                       | Port used by the backend server                                                                                         |
+| LOG_LEVEL                  | Controls backend logging level                                                                                          |
+| NODE_ENV                   | Defines the runtime environment and controls environment-specific behavior such as log formatting and migration loading |
+| PARKPAY_API_KEY            | API key required to access the endpoints. Must match the frontend API KEY                                               |
+| PAYMENT_PROVIDER           | Selects the payment provider, e.g. mock or Stripe                                                                       |
+| MOCK_PAYMENT_MODE          | Behavior of the mock payment provider                                                                                   |
+| STRIPE_SECRET_KEY          | Stripe backend secret key when using Stripe                                                                             |
+| STRIPE_TEST_PAYMENT_METHOD | Stripe test payment method used for sandbox testing                                                                     |
 
 ## Mock Payment Provider
 For local development and controlled tests, ParkPay can use the mock payment provider.
