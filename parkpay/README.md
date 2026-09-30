@@ -18,7 +18,7 @@ are retried later when the provider becomes reachable again.
 
 
 # Quick Start
-For a full setup guide, see [Setup](docs/setup.md)
+For a full setup guide, see [Setup](docs/setup.md)   
 Inside the parkpay directory:  
 Install dependencies:
 ````shell
