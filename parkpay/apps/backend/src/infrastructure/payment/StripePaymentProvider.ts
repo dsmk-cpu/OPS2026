@@ -1,4 +1,5 @@
 import {
+    CapturePaymentRequest, CapturePaymentResult,
     ExecutePaymentRequest,
     ExecutePaymentResult,
     PaymentProvider,
@@ -26,6 +27,8 @@ export class StripePaymentProvider implements PaymentProvider {
                     amount: request.amountInCents,
                     currency: request.currency.toLowerCase(),
 
+                    capture_method: "manual",
+
                     ...(this.options.testPaymentMethod
                         ? {
                             payment_method: this.options.testPaymentMethod,
@@ -37,6 +40,8 @@ export class StripePaymentProvider implements PaymentProvider {
                         }
                         : {}),
 
+                    // The internal paymentId is stored as te PaymentIntent, so that it can
+                    // be recovered during reconciliation
                     metadata: {
                         paymentId: request.paymentId,
                         idempotencyKey: request.idempotencyKey,
@@ -93,11 +98,26 @@ export class StripePaymentProvider implements PaymentProvider {
         }
     }
 
+    async capture(request: CapturePaymentRequest): Promise<CapturePaymentResult> {
+        try {
+            const paymentIntent = await this.stripe.paymentIntents.capture(request.providerReference);
+            return {
+                status: this.mapStatus(paymentIntent.status),
+                providerReference: paymentIntent.id
+            };
+            
+        } catch (error) {
+            throw this.mapError(error);
+        }
+    }
+
 
     private mapStatus(status: Stripe.PaymentIntent.Status,): PaymentProviderStatus {
         switch (status) {
+            case 'requires_capture':
+                return PaymentProviderStatus.PAID
             case 'succeeded':
-                return PaymentProviderStatus.PAID;
+                return PaymentProviderStatus.CAPTURED;
             case 'canceled':
                 return PaymentProviderStatus.DECLINED;
             default:
