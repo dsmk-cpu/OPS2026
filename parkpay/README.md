@@ -15,7 +15,7 @@ are retried later when the provider becomes reachable again.
 - Replaceable payment providers
 - Stripe Sandbox integration
 - Mock payment provider for testing
-
+- Small Frontend application
 
 # Quick Start
 For a full setup guide, see [Setup](docs/setup.md)   
@@ -52,10 +52,20 @@ STRIPE_SECRET_KEY=CHANGE_IN_LOCAL_ENV
 STRIPE_TEST_PAYMENT_METHOD=pm_card_visa
 ````
 
+We also included a small frontend application for demonstration purposes. Users can enter a license plate and start a payment with a fixed amount.
+Create the frontend environment file based on:
+
+````text
+apps/frontend/.env.example
+````
+
+Both frontend and backend must use the same `PARKPAY_API_KEY`.
+
 Start the backend:
 ````shell
 npm run dev --workspace=apps/backend
 ````
+
 Start the frontend:
 ````shell
 npm run dev --workspace=apps/frontend
