@@ -31,11 +31,11 @@ apps/backend/.env.example
 Example configuration:
 ````dotenv
 # Database
-DATABASE_PATH=CHANGE_IN_LOCAL_ENV
-PORT=CHANGE_IN_LOCAL_ENV
+DATABASE_PATH=./data/parkpay.sqlite
+PORT=3000
 
 # Logging
-LOG_LEVEL=CHANGE_IN_LOCAL_ENV
+LOG_LEVEL=info
 
 # API key
 PARKPAY_API_KEY=CHANGE_IN_LOCAL_ENV
