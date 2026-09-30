@@ -11,7 +11,8 @@ export const AppDataSource = new DataSource({
 
     entities: [PaymentEntity],
 
-    migrations: ['./dist/src/infrastructure/persistence/migrations/*.js'],
+    migrations: ['./src/infrastructure/persistence/migrations/*.{ts,js}',
+                './dist/src/infrastructure/persistence/migrations/*.js'],
 
     synchronize: false,
     logging: false,

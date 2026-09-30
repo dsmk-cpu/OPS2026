@@ -26,7 +26,7 @@ describe('PaymentOrmRepository', () => {
         })
     });
 
-    it('returns only pending payments that are due', async () => {
+    it('returns pending and paid payments that are due', async () => {
         const now = new Date('2026-09-28T10:00:00.000Z');
 
         const newPayment = Payment.create({
@@ -89,12 +89,16 @@ describe('PaymentOrmRepository', () => {
         await paymentRepository.save(futurePayment);
         await paymentRepository.save(paidPayment);
 
-        const res = await paymentRepository.findPendingDue(now);
+        const res = await paymentRepository.findDue(now);
 
-        expect(res).toHaveLength(2);
-        expect(res.map(payment => payment.id))
-            .toEqual(expect.arrayContaining(['new-payment', 'overdue-payment']));
+        expect(res).toHaveLength(3);
+        expect(res.map(payment => payment.id)).toEqual(
+            expect.arrayContaining([
+                'new-payment',
+                'overdue-payment',
+                'paid-payment',
+            ])
+        );
         expect(res.map(payment => payment.id)).not.toContain('future-payment');
-        expect(res.map(payment => payment.id)).not.toContain('paid-payment');
     });
 });
