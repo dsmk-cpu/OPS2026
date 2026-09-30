@@ -7,6 +7,7 @@ import type { PaymentRepository } from '../../src/ports/PaymentRepository.js';
 import {CreatePayment} from "../../src/application/services/CreatePayment.js";
 import {PaymentConflictError} from "../../src/errors/PaymentConflictError.js";
 
+
 function createRepositoryMock() {
     return {
         save: vi.fn<PaymentRepository['save']>(),
@@ -17,6 +18,15 @@ function createRepositoryMock() {
         findDue: vi.fn<PaymentRepository['findDue']>(),
     };
 }
+
+const logger = {
+    trace: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    fatal: vi.fn(),
+} as any;
 
 describe('CreatePaymentService', () => {
     let repository: ReturnType<
@@ -30,6 +40,7 @@ describe('CreatePaymentService', () => {
 
         service = new CreatePayment(
             repository,
+            logger,
             () => 'payment1',
             () => new Date('2026-09-25T10:00:00.000Z'),
         );

@@ -5,7 +5,6 @@ import {Currency} from "../../src/domain/Currency.js";
 import {ProcessPayment} from "../../src/application/services/ProcessPayment.js";
 import {ReconcilePayment} from "../../src/application/services/ReconcilePayment.js";
 import {PaymentWorker} from "../../src/application/services/PaymentWorker.js";
-import {Logger} from "pino";
 import {CapturePayment} from "../../src/application/services/CapturePayment.js";
 
 function createRepositoryMock() {
@@ -20,8 +19,13 @@ function createRepositoryMock() {
 }
 
 const logger = {
+    trace: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
     error: vi.fn(),
-} as unknown as Logger;
+    fatal: vi.fn(),
+} as any;
 
 describe('PaymentWorker', () => {
     it('processes a new pending payment', async () => {
@@ -39,17 +43,11 @@ describe('PaymentWorker', () => {
 
         repository.findDue.mockResolvedValue([payment]);
 
-        const processPayment = {
-            execute: vi.fn(),
-        } as unknown as ProcessPayment;
+        const processPayment = { execute: vi.fn() } as unknown as ProcessPayment;
 
-        const reconcilePayment = {
-            execute: vi.fn(),
-        } as unknown as ReconcilePayment;
+        const reconcilePayment = { execute: vi.fn() } as unknown as ReconcilePayment;
 
-        const capturePayment = {
-            execute: vi.fn(),
-        } as unknown as CapturePayment;
+        const capturePayment = { execute: vi.fn() } as unknown as CapturePayment;
 
         const worker = new PaymentWorker(
             repository,

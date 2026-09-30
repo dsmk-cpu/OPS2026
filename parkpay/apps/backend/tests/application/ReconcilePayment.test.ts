@@ -8,6 +8,7 @@ import { PaymentStatus } from '../../src/domain/PaymentStatus.js';
 import { Currency } from '../../src/domain/Currency.js';
 import {PaymentNotFoundError} from "../../src/errors/PaymentNotFoundError.js";
 
+
 function createRepositoryMock() {
     return {
         save: vi.fn<PaymentRepository['save']>(),
@@ -18,6 +19,15 @@ function createRepositoryMock() {
         findDue: vi.fn<PaymentRepository['findDue']>(),
     };
 }
+
+const logger = {
+    trace: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    fatal: vi.fn(),
+} as any;
 
 describe('ReconcilePayment', () => {
     it('marks payment as paid when provider processed it before connection was lost', async () => {
@@ -36,8 +46,8 @@ describe('ReconcilePayment', () => {
         repository.findById.mockResolvedValue(payment);
 
         const provider = new MockPaymentProvider(MockPaymentProviderMode.TIMEOUT_AFTER_PROCESSING);
-        const processPayment = new ProcessPayment(repository, provider, () => new Date('2026-09-27T10:05:00.000Z'));
-        const reconcilePayment = new ReconcilePayment(repository, provider);
+        const processPayment = new ProcessPayment(repository, provider, logger, () => new Date('2026-09-27T10:05:00.000Z'));
+        const reconcilePayment = new ReconcilePayment(repository, provider, logger);
 
         await processPayment.execute('payment-1');
 
@@ -69,7 +79,7 @@ describe('ReconcilePayment', () => {
         repository.findById.mockResolvedValue(payment);
 
         const provider = new MockPaymentProvider(MockPaymentProviderMode.PENDING);
-        const reconcilePayment = new ReconcilePayment(repository, provider, () => new Date('2026-09-27T10:05:00.000Z'));
+        const reconcilePayment = new ReconcilePayment(repository, provider, logger, () => new Date('2026-09-27T10:05:00.000Z'));
         await reconcilePayment.execute('payment-1');
 
         expect(payment.status).toBe(PaymentStatus.PENDING);
@@ -97,7 +107,7 @@ describe('ReconcilePayment', () => {
 
         const provider = new MockPaymentProvider(MockPaymentProviderMode.OFFLINE);
 
-        const reconcilePayment = new ReconcilePayment(repository, provider, () => new Date('2026-09-27T10:05:00.000Z'));
+        const reconcilePayment = new ReconcilePayment(repository, provider, logger, () => new Date('2026-09-27T10:05:00.000Z'));
 
         await reconcilePayment.execute('payment-1');
 
@@ -116,7 +126,7 @@ describe('ReconcilePayment', () => {
         repository.findById.mockResolvedValue(null);
 
         const provider = new MockPaymentProvider(MockPaymentProviderMode.ONLINE_SUCCESS);
-        const reconcilePayment = new ReconcilePayment(repository, provider);
+        const reconcilePayment = new ReconcilePayment(repository, provider, logger);
 
         await expect(reconcilePayment.execute('unknown-payment')).rejects.toBeInstanceOf(PaymentNotFoundError);
         expect(repository.findById).toHaveBeenCalledWith('unknown-payment');

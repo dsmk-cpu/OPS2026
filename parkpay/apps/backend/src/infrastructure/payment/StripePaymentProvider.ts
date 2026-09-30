@@ -40,6 +40,8 @@ export class StripePaymentProvider implements PaymentProvider {
                         }
                         : {}),
 
+                    // The internal paymentId is stored as te PaymentIntent, so that it can
+                    // be recovered during reconciliation
                     metadata: {
                         paymentId: request.paymentId,
                         idempotencyKey: request.idempotencyKey,

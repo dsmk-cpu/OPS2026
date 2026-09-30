@@ -22,8 +22,20 @@ export class PaymentWorker {
 
         const payments = await this.paymentRepository.findDue(now);
 
+        /*
+        Due payments are handled according to their current state.
+        Reconcile: resolves uncertain provider outcome before attempting another payment.
+        Pending: still requires authorization
+        Paid: payment is authorized but still requires capture
+         */
         for (const payment of payments) {
             try {
+                this.logger.debug({
+                        paymentId: payment.id,
+                        status: payment.status,
+                        requiresReconciliation: payment.requiresReconciliation,
+                    }, 'Payment worker processing due payment');
+
                 if (payment.requiresReconciliation) {
                     await this.reconcilePayment.execute(payment.id);
                     continue;

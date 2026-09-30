@@ -18,7 +18,7 @@ x-api-key: <PARKPAY_API_KEY>
 ````http request
 POST /parkpay/v1
 ````
-After performing, the request is first stored locally. Payment processing is performed asynchronously by the worker.
+After receiving the request, the payment is first stored locally. Payment processing is performed asynchronously by the worker.
 
 ### Headers:
 ````http request
@@ -44,7 +44,7 @@ x-api-key: <PARKPAY_API_KEY>
 | kennzeichen | string  | License plate                                           |
 | betrag      | string  | Amount (with two decimal places) which needs to be paid |
 
-In parkPay, money is stored in cents (using an integer). Therefore, `12.50` becomes `1250`. 
+In ParkPay, money is stored in cents (using an integer). Therefore, `12.50` becomes `1250`. 
 
 ### Example Response
 
@@ -61,7 +61,7 @@ In parkPay, money is stored in cents (using an integer). Therefore, `12.50` beco
 If the same `parkingId` is used again with the same payment data, then parkPay returns
 the existing payment instead of creating another payment.  
 
-If the same `parkingId` is submitted with conflicting data, parkPay returns a conflict.  
+If the same `parkingId` is submitted with conflicting data, ParkPay returns a conflict.  
 
 
 ## Get Payment Status
@@ -90,7 +90,7 @@ x-api-key: <PARKPAY_API_KEY>
 - `PENDING`: Payment created locally and is waiting for processing, retry or reconciliation.
 - `PAID`: Payment was successfully authorized by the payment provider but has not been captured yet.
 - `CAPTURED`: The authorized amount was successfully captured and the payment is complete.
-- `CANCELED`: payment was canceled or declined
+- `CANCELED`: Payment was canceled or declined
 
 Typical successful flow:
 ````text

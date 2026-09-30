@@ -3,7 +3,7 @@ ParkPay currently uses two different credentials:
 1. `PARKPAY_API_KEY`: Used to protect the API
 2. `STRIPE_SECRET_KEY`: Used to authenticate the backend against Stripe
 
-These keys **must not** be exchanged.
+These keys **must not** be exposed or committed to the repository.
 
 
 ## ParkPay API Key

@@ -7,6 +7,7 @@ import { PaymentStatus } from '../../src/domain/PaymentStatus.js';
 import { Currency } from '../../src/domain/Currency.js';
 import {PaymentNotFoundError} from "../../src/errors/PaymentNotFoundError.js";
 
+
 function createRepositoryMock() {
     return {
         save: vi.fn<PaymentRepository['save']>(),
@@ -17,6 +18,15 @@ function createRepositoryMock() {
         findDue: vi.fn<PaymentRepository['findDue']>(),
     };
 }
+
+const logger = {
+    trace: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    fatal: vi.fn(),
+} as any;
 
 describe('ProcessPayment', () => {
     it('marks a pending payment as paid and saves it', async () => {
@@ -36,7 +46,7 @@ describe('ProcessPayment', () => {
 
         const provider = new MockPaymentProvider(MockPaymentProviderMode.ONLINE_SUCCESS);
 
-        const processPayment = new ProcessPayment(repository, provider);
+        const processPayment = new ProcessPayment(repository, provider, logger);
 
         await processPayment.execute('payment-1');
 
@@ -54,7 +64,7 @@ describe('ProcessPayment', () => {
 
         const provider = new MockPaymentProvider(MockPaymentProviderMode.ONLINE_SUCCESS);
 
-        const processPayment = new ProcessPayment(repository, provider);
+        const processPayment = new ProcessPayment(repository, provider, logger);
 
         await expect(processPayment.execute('missing-payment'))
             .rejects.toBeInstanceOf(PaymentNotFoundError);
@@ -83,10 +93,7 @@ describe('ProcessPayment', () => {
             MockPaymentProviderMode.DECLINED
         );
 
-        const processPayment = new ProcessPayment(
-            repository,
-            provider
-        );
+        const processPayment = new ProcessPayment(repository, provider, logger);
 
         await processPayment.execute('payment-1');
 
@@ -115,11 +122,7 @@ describe('ProcessPayment', () => {
             MockPaymentProviderMode.PENDING
         );
 
-        const processPayment = new ProcessPayment(
-            repository,
-            provider,
-            () => new Date('2026-09-27T10:05:00.000Z')
-        );
+        const processPayment = new ProcessPayment(repository, provider, logger, () => new Date('2026-09-27T10:05:00.000Z'));
 
         await processPayment.execute('payment-1');
 
@@ -148,7 +151,7 @@ describe('ProcessPayment', () => {
 
         const provider = new MockPaymentProvider(MockPaymentProviderMode.OFFLINE);
 
-        const processPayment = new ProcessPayment(repository, provider, () => new Date('2026-09-27T10:05:00.000Z'));
+        const processPayment = new ProcessPayment(repository, provider, logger, () => new Date('2026-09-27T10:05:00.000Z'));
 
         await processPayment.execute('payment-1');
 
@@ -181,7 +184,7 @@ describe('ProcessPayment', () => {
 
         const provider = new MockPaymentProvider(MockPaymentProviderMode.OFFLINE);
 
-        const processPayment = new ProcessPayment(repository, provider, () => new Date('2026-09-27T10:10:00.000Z'));
+        const processPayment = new ProcessPayment(repository, provider, logger, () => new Date('2026-09-27T10:10:00.000Z'));
 
         await processPayment.execute('payment-1');
 
@@ -217,11 +220,7 @@ describe('ProcessPayment', () => {
 
         const provider = new MockPaymentProvider(MockPaymentProviderMode.OFFLINE);
 
-        const processPayment = new ProcessPayment(
-            repository,
-            provider,
-            () => new Date('2026-09-28T11:00:00.000Z')
-        );
+        const processPayment = new ProcessPayment(repository, provider, logger, () => new Date('2026-09-28T11:00:00.000Z'));
 
         await processPayment.execute('payment-1');
         expect(payment.nextRetryAt).toEqual(new Date('2026-09-28T11:30:00.000Z'));

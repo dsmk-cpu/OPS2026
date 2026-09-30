@@ -9,6 +9,16 @@ import {PaymentProviderConnectionError} from "../../src/errors/PaymentProviderCo
 import {PaymentProviderError} from "../../src/errors/PaymentProviderError.js";
 
 
+
+const logger = {
+    trace: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    fatal: vi.fn(),
+} as any;
+
 describe("CapturePayment", () => {
     const fixedNow = new Date("2026-09-29T12:00:00.000Z");
 
@@ -59,6 +69,7 @@ describe("CapturePayment", () => {
         const useCase = new CapturePayment(
             repository,
             provider,
+            logger,
             () => fixedNow
         );
 
@@ -76,7 +87,7 @@ describe("CapturePayment", () => {
 
         vi.mocked(provider.capture).mockRejectedValue(new PaymentProviderConnectionError("Provider offline"));
 
-        const useCase = new CapturePayment(repository, provider, () => fixedNow);
+        const useCase = new CapturePayment(repository, provider, logger, () => fixedNow);
 
         await useCase.execute(payment.id);
 
@@ -94,7 +105,7 @@ describe("CapturePayment", () => {
 
         vi.mocked(firstProvider.capture).mockRejectedValue(new PaymentProviderConnectionError("Provider offline"));
 
-        const firstAttempt = new CapturePayment(firstRepository, firstProvider, () => fixedNow);
+        const firstAttempt = new CapturePayment(firstRepository, firstProvider, logger, () => fixedNow);
 
         await firstAttempt.execute(payment.id);
 
@@ -111,7 +122,7 @@ describe("CapturePayment", () => {
             providerReference: "pi_test_123"
         });
 
-        const secondAttempt = new CapturePayment(secondRepository, secondProvider, () => retryTime);
+        const secondAttempt = new CapturePayment(secondRepository, secondProvider, logger, () => retryTime);
 
         await secondAttempt.execute(payment.id);
 
@@ -124,7 +135,7 @@ describe("CapturePayment", () => {
         const repository = createRepository(null);
         const provider = createProvider();
 
-        const useCase = new CapturePayment(repository, provider, () => fixedNow);
+        const useCase = new CapturePayment(repository, provider, logger, () => fixedNow);
 
         await useCase.execute("unknown-payment");
 
@@ -146,7 +157,7 @@ describe("CapturePayment", () => {
         const repository = createRepository(payment);
         const provider = createProvider();
 
-        const useCase = new CapturePayment(repository, provider, () => fixedNow);
+        const useCase = new CapturePayment(repository, provider, logger, () => fixedNow);
 
         await useCase.execute(payment.id);
 
@@ -169,7 +180,7 @@ describe("CapturePayment", () => {
         const repository = createRepository(payment);
         const provider = createProvider();
 
-        const useCase = new CapturePayment(repository, provider, () => fixedNow);
+        const useCase = new CapturePayment(repository, provider, logger, () => fixedNow);
 
         await expect(useCase.execute(payment.id),).rejects.toBeInstanceOf(PaymentProviderError);
         expect(provider.capture).not.toHaveBeenCalled();

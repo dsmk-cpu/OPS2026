@@ -37,7 +37,7 @@ app.use(
 );
 
 export const paymentRepository = new PaymentOrmRepository(AppDataSource.getRepository(PaymentEntity));
-const createPayment  = new CreatePayment(paymentRepository);
+const createPayment  = new CreatePayment(paymentRepository, logger);
 const getPayment  = new GetPayment(paymentRepository);
 const paymentController = new PaymentController(createPayment, getPayment);
 

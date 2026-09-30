@@ -19,9 +19,9 @@ async function start(): Promise<void> {
         logger.info('Database migrations complete.');
 
         const paymentProvider = createPaymentProvider();
-        const processPayment = new ProcessPayment(paymentRepository, paymentProvider);
-        const reconcilePayment = new ReconcilePayment(paymentRepository, paymentProvider);
-        const capturePayment = new CapturePayment(paymentRepository, paymentProvider,);
+        const processPayment = new ProcessPayment(paymentRepository, paymentProvider, logger);
+        const reconcilePayment = new ReconcilePayment(paymentRepository, paymentProvider, logger);
+        const capturePayment = new CapturePayment(paymentRepository, paymentProvider, logger);
         const paymentWorker = new PaymentWorker(paymentRepository, processPayment, reconcilePayment,capturePayment, logger);
         const paymentWorkScheduler = new PaymentWorkerScheduler(paymentWorker, logger, 5_000);
 

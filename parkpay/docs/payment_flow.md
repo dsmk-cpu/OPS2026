@@ -6,8 +6,8 @@ New payments start with the status: `PENDING`
 ## Normal Payment Flow
 
 ````text
-POST /parkpay/v1 -> CreatePayment -> Save locally as PENDING -> PaymentWorker -> ProcessPayment -> PaymentProvider.execute() -> Stripe / Mock -> PAID
- -> PaymentWorker -> CapturePayment -> PaymentProvider.Capture() -> CAPTURED
+POST /parkpay/v1 -> CreatePayment -> Save locally as PENDING -> PaymentWorker -> ProcessPayment -> paymentProvider.execute() -> Stripe / Mock -> PAID
+ -> PaymentWorker -> CapturePayment -> paymentProvider.capture() -> CAPTURED
 ````
 After a successful authorization:
 ````text
@@ -59,22 +59,21 @@ requiresReconciliation = true
 The worker then uses ReconcilePayment to query the existing provider transaction.
 
 ### Reconciliation
-`````text
+````text
 PaymentWorker -> requiresReconciliation?
                    |                 |
                    |                 |
                  false               true
                    |                 |
              ProcessPayment      ReconcilePayment
-`````
+````
 If a provider reference (e.g. pi_...) exists, then the payment is queried directly.
 If the reference is missing, Stripe can recover the PaymentIntent using the internal `paymentId` stored inside the Stripe metadata.
 
 Depending on the current provider state, reconciliation can result in:
 
-```text
+````text
 requires_capture -> PAID
-succeeded        -> CAPTURED
 pending          -> PENDING
 ````
 
@@ -88,7 +87,7 @@ nextRetryAt = NULL
 If the payment is reconciled as `PAID`, then the worker continues with the capture step afterward.
 
 ## Declined Payment
-If stripe rejects the payment:
+If Stripe rejects the payment:
 ````text
 StripeCardError -> Payment.markCancelled() -> CANCELED
 ````
@@ -97,7 +96,7 @@ Declined payments are not retried.
 ## Tested Offline Behavior
 The offline retry flow was verified with the Stripe sandbox.
 Following was done:
-`````text
-Set internet unavailable -> POST payment -> Payment stored locally as PENDING -> Stripe connections fails -> retryCount increases 
+````text
+Set internet unavailable -> POST payment -> Payment stored locally as PENDING -> Stripe connection fails -> retryCount increases 
 -> nextRetryAt is scheduled -> Internet restored -> Next retry reaches Stripe -> Payment changes to PAID -> Capture is executed -> Payment changes to CAPTURED
-`````
+````

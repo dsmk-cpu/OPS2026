@@ -36,6 +36,7 @@ PORT=3000
 
 # Logging
 LOG_LEVEL=info
+NODE_ENV=development
 
 # API key
 PARKPAY_API_KEY=CHANGE_IN_LOCAL_ENV
@@ -46,6 +47,7 @@ MOCK_PAYMENT_MODE=ONLINE_SUCCESS
 ````
 For Stripe Sandbox testing, use the following instead of mock:
 ````dotenv
+PAYMENT_PROVIDER=stripe
 STRIPE_SECRET_KEY=CHANGE_IN_LOCAL_ENV
 STRIPE_TEST_PAYMENT_METHOD=pm_card_visa
 ````

@@ -46,6 +46,11 @@ export class PaymentOrmRepository implements PaymentRepository{
         return entities.map(PaymentMapper.toDomain);
     }
 
+    /*
+    Returns both PENDING and PAID payments.
+    PENDING payments need processing or reconciliation,
+    PAID payments still need capture.
+     */
     async findDue(now: Date): Promise<Payment[]> {
         const entities = await this.repository
             .createQueryBuilder('payment')

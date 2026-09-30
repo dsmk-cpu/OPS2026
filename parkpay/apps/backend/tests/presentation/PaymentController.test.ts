@@ -23,6 +23,16 @@ function createRepositoryMock() {
     };
 }
 
+const logger = {
+    trace: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    fatal: vi.fn(),
+} as any;
+
+
 function createResponseMock() {
     const status = vi.fn();
     const json = vi.fn();
@@ -48,6 +58,7 @@ describe('PaymentController', () => {
 
         createPayment = new CreatePayment(
             repository,
+            logger,
             () => 'payment1',
             () => new Date('2026-09-27T10:00:00.000Z'),
         );

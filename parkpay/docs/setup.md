@@ -1,5 +1,5 @@
 # Setup
-This documentation explains how to install and setup up ParkPay.
+This documentation explains how to install and set up ParkPay.
 
 ## Requirements
 - Node.js 24
@@ -30,16 +30,17 @@ inside the backend folder ``apps/backend``.
 
 Environment Variables:
 
-| Variable                   | Description                                         |
-|----------------------------|-----------------------------------------------------|
-| DATABASE_PATH              | Path to the local SQLite database file              |
-| PORT                       | Port used by the backend server                     |
-| LOG_LEVEL                  | Controls backend logging level                      |
-| PARKPAY_API_KEY            | API key required to access the endpoints            |
-| PAYMENT_PROVIDER           | Selects the payment provider, e.g. mock or Stripe   |
-| MOCK_PAYMENT_MODE          | Behavior of the mock payment provider               |
-| STRIPE_SECRET_KEY          | Stripe backend secret key when using Stripe         |
-| STRIPE_TEST_PAYMENT_METHOD | Stripe test payment method used for sandbox testing |
+| Variable                   | Description                                                 |
+|----------------------------|-------------------------------------------------------------|
+| DATABASE_PATH              | Path to the local SQLite database file                      |
+| PORT                       | Port used by the backend server                             |
+| LOG_LEVEL                  | Controls backend logging level                              |
+| NODE_ENV                   | Defines the runtime environment and controls log formatting |
+| PARKPAY_API_KEY            | API key required to access the endpoints                    |
+| PAYMENT_PROVIDER           | Selects the payment provider, e.g. mock or Stripe           |
+| MOCK_PAYMENT_MODE          | Behavior of the mock payment provider                       |
+| STRIPE_SECRET_KEY          | Stripe backend secret key when using Stripe                 |
+| STRIPE_TEST_PAYMENT_METHOD | Stripe test payment method used for sandbox testing         |
 
 ## Mock Payment Provider
 For local development and controlled tests, ParkPay can use the mock payment provider.
@@ -58,7 +59,7 @@ Available mock modes:
 | TIMEOUT_AFTER_PROCESSING | Simulates a payment that was processed but whose response was lost |
 | DECLINED                 | Simulates a declined payment                                       |
 | PENDING                  | Provider keeps the payment pending                                 |
-| PROVIDER_ERROR           | Simulates a genernal provider error                                |
+| PROVIDER_ERROR           | Simulates a general provider error                                 |
 
 Example: Offline Retry
 ````dotenv
@@ -70,6 +71,7 @@ Example of a full environment file using mock provider
 DATABASE_PATH=./data/parkpay.sqlite
 PORT=3000
 LOG_LEVEL=info
+NODE_ENV=development
 PARKPAY_API_KEY=YOUR_API_KEY
 PAYMENT_PROVIDER=mock
 MOCK_PAYMENT_MODE=ONLINE_SUCCESS
@@ -84,6 +86,7 @@ Example of a full environment file using Stripe as the payment provider:
 DATABASE_PATH=./data/parkpay.sqlite
 PORT=3000
 LOG_LEVEL=info
+NODE_ENV=development
 PARKPAY_API_KEY=YOUR_API_KEY
 PAYMENT_PROVIDER=stripe
 MOCK_PAYMENT_MODE=
@@ -136,6 +139,8 @@ From repository root:
 ````shell
 docker compose up --build
 ````
+
+The Docker backend runs with `NODE_ENV=production` and uses structured JSON logs.
 
 Stop the stack:
 ````shell
