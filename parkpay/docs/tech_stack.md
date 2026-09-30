@@ -14,3 +14,10 @@ ParkPay is implemented as a TypeScript monorepo with separate backend and fronte
 - Pino
 - Helmet
 - express-rate-limit
+
+## Frontend
+- React 19
+- TypeScript
+- Vite
+- CSS
+- Playwright for end-to-end testing
